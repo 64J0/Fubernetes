@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="resources/Secret.fs" />
-    <Compile Include="configuration/Configuration.fs" />
+    <Compile Include="src/resources/Secret.fs" />
+    <Compile Include="src/configuration/Configuration.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
