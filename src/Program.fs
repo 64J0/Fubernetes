@@ -1,7 +1,8 @@
 // Learn more about F# at http://docs.microsoft.com/dotnet/fsharp
 
 open System
-open FsharpK8s
+open FsharpK8s.Configuration
+open FsharpK8s.Resources
 
 // SYSTEM SPECS:
 //
@@ -24,9 +25,9 @@ let main argv =
         [ opaqueSecret.toYamlBuffer() ]
     
     let outDir = "../prod/test.yml"
-    let config: Configuration.Configuration = 
+    let config: Configuration = 
         { OutDir = outDir
           Resources = resourceList }
 
-    Configuration.buildYaml (config)
+    buildYaml (config)
     0 // return an integer exit code

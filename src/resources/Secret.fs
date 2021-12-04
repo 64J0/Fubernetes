@@ -1,4 +1,4 @@
-namespace FsharpK8s
+namespace FsharpK8s.Resources
 
 open System
 open System.IO
@@ -37,19 +37,19 @@ module Secret =
 
     type OpaqueSecret (constructor: OpaqueSecretConstructor) =
         member private this.addName (templateString: string) =
-            let nameId = "$NAME"
+            let nameId = "$NAME$"
             templateString.Replace(nameId, constructor.Name)
 
         member private this.addNamespace (templateString: string) =
-            let namespaceId = "$NAMESPACE"
+            let namespaceId = "$NAMESPACE$"
             templateString.Replace(namespaceId, constructor.Namespace)
 
         // https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/strings
         member private this.getTupleString (tuple: TupleString) =
-            $"{fst tuple}:{snd tuple}\n\t"
+            $"{fst tuple}: {snd tuple}\n\t"
 
         member private this.addLabels (templateString: string) =
-            let labelsId = "$LABELS"
+            let labelsId = "$LABELS$"
             let labelsValue =
                 match (constructor.Labels) with
                 | Some labels -> 
@@ -61,14 +61,14 @@ module Secret =
             templateString.Replace(labelsId, labelsValue)
 
         member private this.encodeBase64 (tuple: TupleString) =
-            let encodedValue = 
+            let encodedValue () = 
                 (snd tuple)
                 |> Text.Encoding.UTF8.GetBytes
                 |> Convert.ToBase64String
-            (fst tuple, encodedValue)
+            (fst tuple, encodedValue ())
 
         member private this.addData (templateString: string) =
-            let dataId = "$DATA"
+            let dataId = "$DATA$"
             let dataValue =
                 constructor.Data
                 |> List.map (this.encodeBase64 >> this.getTupleString)
@@ -77,7 +77,7 @@ module Secret =
             templateString.Replace(dataId, dataValue)
 
         member this.toYamlBuffer () =
-            let templatePath = "../templates/secret/OpaqueSecret.yaml"
+            let templatePath = "./templates/secret/OpaqueSecret.yaml"
 
             File.ReadAllText(templatePath, Text.Encoding.UTF8)
             |> this.addName

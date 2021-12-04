@@ -14,5 +14,13 @@ module Configuration =
 
     let buildYaml (config: Configuration) =
         let parsedResources = parseResources config.Resources
-        
+
+        let destinationPathExists () = Directory.Exists(config.OutDir)
+
+        let createDir () =
+            if not (destinationPathExists()) then
+                let file = File.Create(config.OutDir)
+                file.Close()
+                
+        createDir()
         File.WriteAllText(config.OutDir, parsedResources)
