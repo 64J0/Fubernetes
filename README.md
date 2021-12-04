@@ -57,3 +57,15 @@ And then, you could just apply this configuration by running:
 ```bash
 $ kubectl apply -f prod/test.secret.yml
 ```
+
+## What we have mapped so far:
+
+- [ ] Secrets
+  - [x] OpaqueSecrets
+  - [ ] ServiceAccountToken
+  - [ ] DockerCfg
+  - [ ] DockerConfigJson
+  - [ ] BasicAuthentication
+  - [ ] SshAuth
+  - [ ] Tls
+  - [ ] BootstrapTokenData
