@@ -6,6 +6,7 @@ open System.IO
 module Configuration =
     type Configuration =
         { OutDir: string
+          OutFilename: string
           Resources: List<string> }
 
     let private parseResources (resources: List<string>) =
@@ -19,6 +20,7 @@ module Configuration =
 
         let createDir () =
             if not (destinationPathExists()) then
+                printfn "here 1111"
                 let file = File.Create(config.OutDir)
                 file.Close()
                 

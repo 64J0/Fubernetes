@@ -24,9 +24,11 @@ let main argv =
     let resourceList = 
         [ opaqueSecret.toYamlBuffer() ]
     
-    let outDir = "./prod/test.yml"
+    let outDir = "./prod/"
+    let outFilename = "test.secret.yml"
     let config: Configuration = 
         { OutDir = outDir
+          OutFilename = outFilename
           Resources = resourceList }
 
     buildYaml (config)
