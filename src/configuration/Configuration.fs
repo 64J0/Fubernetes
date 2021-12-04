@@ -5,24 +5,24 @@ open System.IO
 
 module Configuration =
     type Configuration =
-        { OutDir: string
-          OutFilename: string
+        { OutPath: string
           Resources: List<string> }
 
-    let private parseResources (resources: List<string>) =
+    let private parseResources (resources: List<string>) : string =
         resources
         |> List.reduce (fun (acc: string) (el: string) -> $"{acc}\n---\n{el}")
 
-    let buildYaml (config: Configuration) =
-        let parsedResources = parseResources config.Resources
-
-        let destinationPathExists () = Directory.Exists(config.OutDir)
-
-        let createDir () =
+    let buildYaml (config: Configuration) : unit =
+        let directory = Path.GetDirectoryName(config.OutPath)
+        let destinationPathExists () = Directory.Exists(config.OutPath)
+        
+        let createPath () =
             if not (destinationPathExists()) then
-                printfn "here 1111"
-                let file = File.Create(config.OutDir)
+                Directory.CreateDirectory(directory) |> ignore
+                let file = File.Create(config.OutPath)
                 file.Close()
                 
-        createDir()
-        File.WriteAllText(config.OutDir, parsedResources)
+        createPath()
+        
+        let parsedResources = parseResources config.Resources
+        File.WriteAllText(config.OutPath, parsedResources)
