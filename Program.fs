@@ -1,13 +1,6 @@
-// Learn more about F# at http://docs.microsoft.com/dotnet/fsharp
-
 open System
 open FsharpK8s.Configuration
 open FsharpK8s.Resources
-
-// SYSTEM SPECS:
-//
-// The user must define the output directory
-// default value will be the current directory
 
 [<EntryPoint>]
 let main argv =
