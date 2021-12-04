@@ -34,7 +34,7 @@ let config: Configuration =
       Resources = resourceList }
 
 // Finally, call this function to create the directory if it does not exist yet and create the YAML file
-buildYaml (config)
+createOutPathAndBuildYaml (config)
 ```
 
 The result after running this command will be a file called `test.secret.yml` with this content inside:
@@ -43,13 +43,13 @@ The result after running this command will be a file called `test.secret.yml` wi
 apiVersion: v1
 kind: Secret
 metadata:
-  name: Secret01
+  name: secret-01
   namespace: default
 type: Opaque
 data:
   key1: dmFsdWUx
-	key2: dmFsdWUy
-	key3: dmFsdWUz
+  key2: dmFsdWUy
+  key3: dmFsdWUz
 ```
 
 And then, you could just apply this configuration by running:
