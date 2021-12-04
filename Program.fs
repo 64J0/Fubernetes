@@ -1,9 +1,7 @@
-open System
 open FsharpK8s.Configuration
 open FsharpK8s.Resources
 
-[<EntryPoint>]
-let main argv =
+let createSimpleSecret () =
     let opaqueSecret = 
         new Secret.OpaqueSecret(
             { Name = "secret-01"
@@ -15,11 +13,15 @@ let main argv =
 
     let resourceList = 
         [ opaqueSecret.toYamlBuffer() ]
-    
+
     let outPath = "./prod/test.secret.yml"
     let config: Configuration = 
         { OutPath = outPath
           Resources = resourceList }
 
     buildYaml (config)
+
+[<EntryPoint>]
+let main argv =
+    createSimpleSecret ()
     0 // return an integer exit code
