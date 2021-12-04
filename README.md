@@ -15,7 +15,6 @@ let opaqueSecret =
     new Secret.OpaqueSecret(
         { Name = "Secret01"
           Namespace = "default"
-          Labels = None
           Data = 
             [ ("key1", "value1") 
               ("key2", "value2")
@@ -36,4 +35,25 @@ let config: Configuration =
 
 // Finally, call this function to create the directory if it does not exist yet and create the YAML file
 buildYaml (config)
+```
+
+The result after running this command will be a file called `test.secret.yml` with this content inside:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: Secret01
+  namespace: default
+type: Opaque
+data:
+  key1: dmFsdWUx
+	key2: dmFsdWUy
+	key3: dmFsdWUz
+```
+
+And then, you could just apply this configuration by running:
+
+```bash
+$ kubectl apply -f prod/test.secret.yml
 ```
