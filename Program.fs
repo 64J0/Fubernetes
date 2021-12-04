@@ -13,7 +13,7 @@ open FsharpK8s.Resources
 let main argv =
     let opaqueSecret = 
         new Secret.OpaqueSecret(
-            { Name = "Secret01"
+            { Name = "secret-01"
               Namespace = "default"
               Data = 
                 [ ("key1", "value1") 

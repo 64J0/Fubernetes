@@ -9,7 +9,7 @@ module Secret =
     type private ListTupleString = List<TupleString>
 
     type OpaqueSecretConstructor =
-        { Name: string
+        { Name: string // should be lowercase
           Namespace: string
           Data: ListTupleString }
 
@@ -45,7 +45,9 @@ module Secret =
 
         // https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/strings
         member private this.getTupleString (tuple: TupleString) =
-            $"{fst tuple}: {snd tuple}\n\t"
+            let tabLength = 2
+            let tabSpace = new String(' ', tabLength)
+            $"{fst tuple}: {snd tuple}\n\t".Replace("\t", tabSpace)
 
         member private this.encodeBase64 (tuple: TupleString) =
             let encodedValue () = 
