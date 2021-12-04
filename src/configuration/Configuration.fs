@@ -8,21 +8,21 @@ module Configuration =
         { OutPath: string
           Resources: List<string> }
 
+    let private createOutPath (outPath: string) =
+        let directory = Path.GetDirectoryName(outPath)
+        let destinationPathExists () = Directory.Exists(outPath)
+        
+        if not (destinationPathExists()) then
+            Directory.CreateDirectory(directory) |> ignore
+            let file = File.Create(outPath)
+            file.Close()
+
     let private parseResources (resources: List<string>) : string =
         resources
         |> List.reduce (fun (acc: string) (el: string) -> $"{acc}\n---\n{el}")
 
-    let buildYaml (config: Configuration) : unit =
-        let directory = Path.GetDirectoryName(config.OutPath)
-        let destinationPathExists () = Directory.Exists(config.OutPath)
-        
-        let createPath () =
-            if not (destinationPathExists()) then
-                Directory.CreateDirectory(directory) |> ignore
-                let file = File.Create(config.OutPath)
-                file.Close()
-                
-        createPath()
+    let createOutPathAndBuildYaml (config: Configuration) : unit =
+        createOutPath (config.OutPath)
         
         let parsedResources = parseResources config.Resources
         File.WriteAllText(config.OutPath, parsedResources)

@@ -19,7 +19,7 @@ let createSimpleSecret () =
         { OutPath = outPath
           Resources = resourceList }
 
-    buildYaml (config)
+    createOutPathAndBuildYaml (config)
 
 [<EntryPoint>]
 let main argv =
