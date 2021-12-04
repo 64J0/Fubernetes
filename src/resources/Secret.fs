@@ -11,7 +11,6 @@ module Secret =
     type OpaqueSecretConstructor =
         { Name: string
           Namespace: string
-          Labels: Option<ListTupleString>
           Data: ListTupleString }
 
     // TODO
@@ -48,18 +47,6 @@ module Secret =
         member private this.getTupleString (tuple: TupleString) =
             $"{fst tuple}: {snd tuple}\n\t"
 
-        member private this.addLabels (templateString: string) =
-            let labelsId = "$LABELS$"
-            let labelsValue =
-                match (constructor.Labels) with
-                | Some labels -> 
-                    labels
-                    |> List.map this.getTupleString
-                    |> List.reduce (fun (acc: string) (el: string) -> acc + el)
-                | None -> ""
-
-            templateString.Replace(labelsId, labelsValue)
-
         member private this.encodeBase64 (tuple: TupleString) =
             let encodedValue () = 
                 (snd tuple)
@@ -82,5 +69,4 @@ module Secret =
             File.ReadAllText(templatePath, Text.Encoding.UTF8)
             |> this.addName
             |> this.addNamespace
-            |> this.addLabels
             |> this.addData

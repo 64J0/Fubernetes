@@ -15,7 +15,6 @@ let main argv =
         new Secret.OpaqueSecret(
             { Name = "Secret01"
               Namespace = "default"
-              Labels = None
               Data = 
                 [ ("key1", "value1") 
                   ("key2", "value2")
