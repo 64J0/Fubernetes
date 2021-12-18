@@ -69,3 +69,10 @@ $ kubectl apply -f prod/test.secret.yml
   - [ ] SshAuth
   - [ ] Tls
   - [ ] BootstrapTokenData
+
+- [ ] Services
+  - [ ] ClusterIP
+  - [ ] NodePort
+  - [ ] Headless
+  - [ ] ExternalName
+  - [ ] LoadBalancer

@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="src/resources/Shared.fs" />
     <Compile Include="src/resources/Secret.fs" />
+    <Compile Include="src/resources/Service.fs" />
     <Compile Include="src/configuration/Configuration.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

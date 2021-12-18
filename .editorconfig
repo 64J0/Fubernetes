@@ -1,0 +1,5 @@
+[*]
+indent_style = space
+
+[*.{fs,template}]
+indent_size = 4

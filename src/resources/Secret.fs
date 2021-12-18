@@ -45,9 +45,7 @@ module Secret =
 
         // https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/strings
         member private this.getTupleString (tuple: TupleString) =
-            let tabLength = 2
-            let tabSpace = new String(' ', tabLength)
-            $"{fst tuple}: {snd tuple}\n\t".Replace("\t", tabSpace)
+            $"\n\t{fst tuple}: {snd tuple}"
 
         member private this.encodeBase64 (tuple: TupleString) =
             let encodedValue () = 
@@ -61,14 +59,16 @@ module Secret =
             let dataValue =
                 constructor.Data
                 |> List.map (this.encodeBase64 >> this.getTupleString)
-                |> List.reduce (fun (acc: string) (el: string) -> acc + el)
+                |> List.reduce (+)
 
             templateString.Replace(dataId, dataValue)
 
         member this.toYamlBuffer () =
-            let templatePath = "./src/templates/secret/OpaqueSecret.yaml"
+            let templatePath = "./src/templates/secret/OpaqueSecret.template"
 
             File.ReadAllText(templatePath, Text.Encoding.UTF8)
             |> this.addName
             |> this.addNamespace
             |> this.addData
+            |> Shared.replaceTabsWithSpaces
+            |> Shared.removeEmptyLines
