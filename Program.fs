@@ -11,13 +11,32 @@ let createSimpleSecret () =
                   ("network", "main-svc") ]
               Ports = 
                 [ { Name = "tcp-port"
-                    Protocol = Service.KubernetesProtocol.TCP
+                    Protocol = ServiceShared.KubernetesProtocol.TCP
                     Port = 8000
                     TargetPort = 8080 }
                   { Name = "udp-port"
-                    Protocol = Service.KubernetesProtocol.UDP
+                    Protocol = ServiceShared.KubernetesProtocol.UDP
                     Port = 8001
                     TargetPort = 8081 } ] })
+
+    let nodePortService =
+        new Service.NodePortService(
+            { Name = "svc-01"
+              Namespace = "default"
+              Selector = 
+                [ ("app", "nginx")
+                  ("network", "main-svc") ]
+              Ports = 
+                [ { Name = "tcp-port"
+                    Protocol = ServiceShared.KubernetesProtocol.TCP
+                    Port = 8000
+                    TargetPort = 8080
+                    NodePort = None }
+                  { Name = "udp-port"
+                    Protocol = ServiceShared.KubernetesProtocol.UDP
+                    Port = 8001
+                    TargetPort = 8081
+                    NodePort = Some 30071 } ] })
 
     let opaqueSecret = 
         new Secret.OpaqueSecret(
@@ -30,7 +49,8 @@ let createSimpleSecret () =
 
     let resourceList = 
         [ opaqueSecret.toYamlBuffer()
-          clusterIpService.toYamlBuffer() ]
+          clusterIpService.toYamlBuffer()
+          nodePortService.toYamlBuffer() ]
 
     let outPath = "./prod/application.yml"
     let config: Configuration = 

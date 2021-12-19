@@ -5,13 +5,10 @@ open System.IO
 
 // https://kubernetes.io/docs/concepts/configuration/secret/
 module Secret =
-    type private TupleString = string * string
-    type private ListTupleString = List<TupleString>
-
     type OpaqueSecretConstructor =
         { Name: string // should be lowercase
           Namespace: string
-          Data: ListTupleString }
+          Data: List<Shared.TupleString> }
 
     // TODO
     type ServiceAccountTokenConstructor = unit
@@ -44,10 +41,10 @@ module Secret =
             templateString.Replace(namespaceId, constructor.Namespace)
 
         // https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/strings
-        member private this.getTupleString (tuple: TupleString) =
+        member private this.getTupleString (tuple: Shared.TupleString) =
             $"\n\t{fst tuple}: {snd tuple}"
 
-        member private this.encodeBase64 (tuple: TupleString) =
+        member private this.encodeBase64 (tuple: Shared.TupleString) =
             let encodedValue () = 
                 (snd tuple)
                 |> Text.Encoding.UTF8.GetBytes

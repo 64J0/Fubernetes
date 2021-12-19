@@ -3,6 +3,8 @@ namespace FsharpK8s.Resources
 open System
 
 module Shared =
+    type TupleString = string * string
+
     let replaceTabsWithSpaces (templateString: string) =
         let tabLength = 4
         let tabSpace = new String(' ', tabLength)
