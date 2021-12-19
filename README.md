@@ -71,8 +71,8 @@ $ kubectl apply -f prod/test.secret.yml
   - [ ] BootstrapTokenData
 
 - [ ] Services
-  - [ ] ClusterIP
-  - [ ] NodePort
+  - [x] ClusterIP
+  - [x] NodePort
   - [ ] Headless
   - [ ] ExternalName
   - [ ] LoadBalancer
