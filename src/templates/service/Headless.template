@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: $NAME$
+    namespace: $NAMESPACE$
+spec:
+    selector: $SELECTOR$
+    ports: $PORTS$
+    type: ClusterIP
+    clusterIP: None
