@@ -73,6 +73,6 @@ $ kubectl apply -f prod/test.secret.yml
 - [ ] Services
   - [x] ClusterIP
   - [x] NodePort
-  - [ ] Headless
+  - [x] Headless
   - [ ] ExternalName
   - [ ] LoadBalancer

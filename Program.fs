@@ -4,7 +4,7 @@ open FsharpK8s.Resources
 let createSimpleSecret () =
     let clusterIpService =
         new Service.ClusterIPService(
-            { Name = "svc-01"
+            { Name = "svc-clusterip-01"
               Namespace = "default"
               Selector = 
                 [ ("app", "nginx")
@@ -21,7 +21,7 @@ let createSimpleSecret () =
 
     let nodePortService =
         new Service.NodePortService(
-            { Name = "svc-01"
+            { Name = "svc-nodeport-01"
               Namespace = "default"
               Selector = 
                 [ ("app", "nginx")
@@ -38,6 +38,30 @@ let createSimpleSecret () =
                     TargetPort = 8081
                     NodePort = Some 30071 } ] })
 
+    let headlessService =
+        new Service.HeadlessService(
+            { Name = "svc-headless-01"
+              Namespace = "default"
+              Selector = 
+                Some [ ("app", "nginx")
+                       ("network", "main-svc") ]
+              Ports = 
+                [ { Name = "tcp-port"
+                    Protocol = ServiceShared.KubernetesProtocol.TCP
+                    Port = 8000
+                    TargetPort = 8080 } ] })
+
+    let headlessServiceWithoutSelector =
+        new Service.HeadlessService(
+            { Name = "svc-headless-01"
+              Namespace = "default"
+              Selector = None
+              Ports = 
+                [ { Name = "tcp-port"
+                    Protocol = ServiceShared.KubernetesProtocol.TCP
+                    Port = 8000
+                    TargetPort = 8080 } ] })
+
     let opaqueSecret = 
         new Secret.OpaqueSecret(
             { Name = "secret-01"
@@ -50,7 +74,9 @@ let createSimpleSecret () =
     let resourceList = 
         [ opaqueSecret.toYamlBuffer()
           clusterIpService.toYamlBuffer()
-          nodePortService.toYamlBuffer() ]
+          nodePortService.toYamlBuffer()
+          headlessService.toYamlBuffer()
+          headlessServiceWithoutSelector.toYamlBuffer() ]
 
     let outPath = "./prod/application.yml"
     let config: Configuration = 

@@ -4,7 +4,7 @@ metadata:
     name: $NAME$
     namespace: $NAMESPACE$
 spec:
-    selector: $SELECTOR$
+    $SELECTOR$
     ports: $PORTS$
     type: ClusterIP
     clusterIP: None
