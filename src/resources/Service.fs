@@ -191,3 +191,32 @@ module Service =
             |> this.addPort
             |> Shared.replaceTabsWithSpaces
             |> Shared.removeEmptyLines
+    
+    // =================================================================
+    type ExternalNameConstructor =
+        { Name: string
+          Namespace: string
+          ExternalName: string }
+
+    type ExternalNameService (constructor: ExternalNameConstructor) =
+        member private this.addName (templateString: string) =
+            let nameId = "$NAME$"
+            templateString.Replace(nameId, constructor.Name)
+
+        member private this.addNamespace (templateString: string) =
+            let namespaceId = "$NAMESPACE$"
+            templateString.Replace(namespaceId, constructor.Namespace)
+
+        member private this.addExternalName (templateString: string) =
+            let selectorId = "$EXTERNAL_NAME$"
+            templateString.Replace(selectorId, constructor.ExternalName)
+
+        member this.toYamlBuffer () =
+            let templatePath = "./src/templates/service/ExternalName.template"
+
+            File.ReadAllText(templatePath, Text.Encoding.UTF8)
+            |> this.addName
+            |> this.addNamespace
+            |> this.addExternalName
+            |> Shared.replaceTabsWithSpaces
+            |> Shared.removeEmptyLines
