@@ -3,3 +3,7 @@ obj/
 .ionide/
 .fake
 prod/
+
+#Paket dependency manager
+.paket/
+paket-files/
