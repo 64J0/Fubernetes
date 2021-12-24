@@ -6,11 +6,10 @@
     <RootNamespace>fsharp_k8s_gen</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="src/resources/Shared.fs" />
-    <Compile Include="src/resources/Secret.fs" />
-    <Compile Include="src/resources/Service.fs" />
-    <Compile Include="src/configuration/Configuration.fs" />
+    <Compile Include="resources/Shared.fs" />
+    <Compile Include="resources/Secret.fs" />
+    <Compile Include="resources/Service.fs" />
+    <Compile Include="configuration/Configuration.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
-  <Import Project=".paket\Paket.Restore.targets" />
 </Project>

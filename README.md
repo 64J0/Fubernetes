@@ -82,3 +82,20 @@ $ kubectl apply -f prod/test.secret.yml
   - [x] ExternalName
   - [x] LoadBalancer
 </details>
+
+## Automated tests:
+
+To get more confident with this project we are using [Expecto](https://github.com/haf/expecto) to write unit tests. This tool is also written in F# and can be used for other kinds of test as well: stress tests, regresion tests or property based tests. For more information please consult the project documentation itself.
+
+To run the tests locally you just need to run those commands on the terminal:
+
+```bash
+# restore paket
+$ dotnet tool restore
+
+# install the dependencies
+$ dotnet paket restore
+
+# run the tests
+$ dotnet test
+```

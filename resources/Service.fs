@@ -65,7 +65,7 @@ module Service =
             templateString.Replace(portId, portValues)
 
         member this.toYamlBuffer () =
-            let templatePath = "./src/templates/service/ClusterIP.template"
+            let templatePath = Shared.templatesDirPath + "/service/ClusterIP.template"
 
             File.ReadAllText(templatePath, Text.Encoding.UTF8)
             |> this.addName
@@ -121,7 +121,7 @@ module Service =
             templateString.Replace(portId, portValues)
 
         member this.toYamlBuffer () =
-            let templatePath = "./src/templates/service/ClusterIP.template"
+            let templatePath = Shared.templatesDirPath + "/service/ClusterIP.template"
 
             File.ReadAllText(templatePath, Text.Encoding.UTF8)
             |> this.addName
@@ -182,7 +182,7 @@ module Service =
             templateString.Replace(portId, portValues)
 
         member this.toYamlBuffer () =
-            let templatePath = "./src/templates/service/Headless.template"
+            let templatePath = Shared.templatesDirPath + "/service/Headless.template"
 
             File.ReadAllText(templatePath, Text.Encoding.UTF8)
             |> this.addName
@@ -212,7 +212,7 @@ module Service =
             templateString.Replace(selectorId, constructor.ExternalName)
 
         member this.toYamlBuffer () =
-            let templatePath = "./src/templates/service/ExternalName.template"
+            let templatePath = Shared.templatesDirPath + "/service/ExternalName.template"
 
             File.ReadAllText(templatePath, Text.Encoding.UTF8)
             |> this.addName
@@ -295,7 +295,7 @@ module Service =
             templateString.Replace(healthCheckNodePortId, healthCheckNodePortValue)
 
         member this.toYamlBuffer () =
-            let templatePath = "./src/templates/service/LoadBalancer.template"
+            let templatePath = Shared.templatesDirPath + "/service/LoadBalancer.template"
 
             File.ReadAllText(templatePath, Text.Encoding.UTF8)
             |> this.addName

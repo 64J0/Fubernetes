@@ -14,3 +14,5 @@ module Shared =
         templateString.Split("\n")
         |> Array.filter (System.String.IsNullOrWhiteSpace >> not)
         |> Array.reduce (fun (acc: string) (line: string) -> $"{acc}\n{line}")
+
+    let templatesDirPath = "./templates"

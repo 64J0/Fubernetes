@@ -61,7 +61,7 @@ module Secret =
             templateString.Replace(dataId, dataValue)
 
         member this.toYamlBuffer () =
-            let templatePath = "./src/templates/secret/OpaqueSecret.template"
+            let templatePath = Shared.templatesDirPath + "/secret/OpaqueSecret.template"
 
             File.ReadAllText(templatePath, Text.Encoding.UTF8)
             |> this.addName
