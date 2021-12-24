@@ -4,10 +4,10 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Program.fs" />
+    <Compile Include="Service.fs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Fsharp-K8s.Main\Fsharp-K8s.Main.fsproj" />
+    <ProjectReference Include="..\Fsharp-K8s.Main\Main.fsproj" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>
