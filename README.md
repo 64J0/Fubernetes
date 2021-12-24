@@ -60,7 +60,9 @@ $ kubectl apply -f prod/test.secret.yml
 
 ## What we have mapped so far:
 
-- [ ] Secrets
+<details>
+  <summary>Secrets</summary>
+  
   - [x] OpaqueSecrets
   - [ ] ServiceAccountToken
   - [ ] DockerCfg
@@ -69,10 +71,14 @@ $ kubectl apply -f prod/test.secret.yml
   - [ ] SshAuth
   - [ ] Tls
   - [ ] BootstrapTokenData
+</details>
 
-- [ ] Services
+<details>
+  <summary>Services</summary>
+  
   - [x] ClusterIP
   - [x] NodePort
   - [x] Headless
-  - [ ] ExternalName
-  - [ ] LoadBalancer
+  - [x] ExternalName
+  - [x] LoadBalancer
+</details>

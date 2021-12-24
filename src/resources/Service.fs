@@ -220,3 +220,90 @@ module Service =
             |> this.addExternalName
             |> Shared.replaceTabsWithSpaces
             |> Shared.removeEmptyLines
+
+    // =================================================================
+    // https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
+    type ExternalTrafficPolicy =
+        | Cluster
+        | Local
+
+    type LoadBalancerConstructor =
+        { Name: string
+          Namespace: string
+          Selector: List<Shared.TupleString>
+          Ports: List<PortConfig>
+          ClusterIP: string Option
+          ExternalTrafficPolicy: ExternalTrafficPolicy Option
+          HealthCheckNodePort: int Option }
+
+    type LoadBalancerService (constructor: LoadBalancerConstructor) =
+        member private this.addName (templateString: string) =
+            let nameId = "$NAME$"
+            templateString.Replace(nameId, constructor.Name)
+
+        member private this.addNamespace (templateString: string) =
+            let namespaceId = "$NAMESPACE$"
+            templateString.Replace(namespaceId, constructor.Namespace)
+
+        member private this.addSelector (templateString: string) =
+            let selectorId = "$SELECTOR$"
+            let selectorValues =
+                constructor.Selector
+                |> List.map (fun (tuple: Shared.TupleString) -> $"\n\t\t{fst tuple}: {snd tuple}")
+                |> List.reduce (+)
+
+            templateString.Replace(selectorId, selectorValues)
+
+        member private this.addPort (templateString: string) =
+            let portId = "$PORTS$"
+            let portValues =
+                constructor.Ports
+                |> List.map (fun (port: PortConfig) ->
+                    $"\n\t\t- name: {port.Name}" +
+                    $"\n\t\t  protocol: {port.Protocol.ToString().ToLower()}" +
+                    $"\n\t\t  port: {port.Port}" +
+                    $"\n\t\t  targetPort: {port.TargetPort}")
+                |> List.reduce (+)
+
+            templateString.Replace(portId, portValues)
+
+        member private this.addClusterIP (templateString: string) =
+            let clusterIPId = "$CLUSTER_IP$"
+            let clusterIPValue =
+                match constructor.ClusterIP with
+                | Some (ip: string) -> $"clusterIp: {ip}"
+                | None -> ""
+
+            templateString.Replace(clusterIPId, clusterIPValue)
+
+        member private this.addExternalTrafficPolicy (templateString: string) =
+            let externalTrafficPolicyId = "$EXTERNAL_TRAFFIC_POLICY$"
+            let externalTrafficPolicyValue =
+                match constructor.ExternalTrafficPolicy with
+                | Some (policy: ExternalTrafficPolicy) -> $"externalTrafficPolicy: {policy.ToString()}"
+                | None -> ""
+
+            templateString.Replace(externalTrafficPolicyId, externalTrafficPolicyValue)
+
+        member private this.addHealthCheckNodePort (templateString: string) =
+            let healthCheckNodePortId = "$HEALTH_CHECK_NODE_PORT$"
+            let healthCheckNodePortValue =
+                match constructor.HealthCheckNodePort with
+                | Some (port: int) -> $"healthCheckNodePort: {port}"
+                | None -> ""
+
+            templateString.Replace(healthCheckNodePortId, healthCheckNodePortValue)
+
+        member this.toYamlBuffer () =
+            let templatePath = "./src/templates/service/LoadBalancer.template"
+
+            File.ReadAllText(templatePath, Text.Encoding.UTF8)
+            |> this.addName
+            |> this.addNamespace
+            |> this.addSelector
+            |> this.addPort
+            |> this.addClusterIP
+            |> this.addExternalTrafficPolicy
+            |> this.addHealthCheckNodePort
+            |> Shared.replaceTabsWithSpaces
+            |> Shared.removeEmptyLines
