@@ -15,4 +15,5 @@ module Shared =
         |> Array.filter (System.String.IsNullOrWhiteSpace >> not)
         |> Array.reduce (fun (acc: string) (line: string) -> $"{acc}\n{line}")
 
-    let templatesDirPath = "./templates"
+    let templatesDirPath = "./Fsharp-K8s.Main/templates"
+    

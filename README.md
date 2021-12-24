@@ -4,6 +4,10 @@
 
 This tool is being created to solve the problem of dealing with YAML configuration files for Kubernetes using a programatic solution. We choose to use F# as the main language mainly due to its strong type system that could help us find bugs/problems on our configuration files easily and faster.
 
+Requisites:
+
+* .NET SDK 6.0.101
+
 ## How it works?
 
 Basically we have created some pre-defined types to make it easier and less error-prone creating the YAML Kubernetes files. In the `Program.fs` file, in the main root of this project it's possible to see an example on how to define opaque secrets.
@@ -26,7 +30,7 @@ let resourceList =
     [ opaqueSecret.toYamlBuffer() ]
 
 // Define the output path using relative path
-let outPath = "./prod/test.secret.yml"
+let outPath = "./prod/application.yml"
 
 // Create a record union with both OutPath and the Resources you want to generate
 let config: Configuration = 
@@ -37,7 +41,13 @@ let config: Configuration =
 createOutPathAndBuildYaml (config)
 ```
 
-The result after running this command will be a file called `test.secret.yml` with this content inside:
+Then, to run this program, you could use this command:
+
+```bash
+$ dotnet run --project Fsharp-K8s.Main/Main.fsproj
+```
+
+The result after running this command will be a file called `application.yml` with this content inside:
 
 ```yaml
 apiVersion: v1
@@ -97,5 +107,5 @@ $ dotnet tool restore
 $ dotnet paket restore
 
 # run the tests
-$ dotnet test
+$ dotnet run --project Fsharp-K8s.Test/Test.fsproj
 ```
