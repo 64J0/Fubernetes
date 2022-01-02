@@ -6,7 +6,7 @@ This tool is being created to solve the problem of dealing with YAML configurati
 
 Requisites:
 
-* .NET SDK 6.0.101
+* .NET SDK 5.0.401
 
 ## How it works?
 
@@ -32,7 +32,7 @@ let resourceList =
 // Define the output path using relative path
 let outPath = "./prod/application.yml"
 
-// Create a record union with both OutPath and the Resources you want to generate
+// Create a record with both OutPath and the Resources you want to generate
 let config: Configuration = 
     { OutPath = outPath
       Resources = resourceList }
