@@ -48,11 +48,11 @@ spec:
   Expect.equal "ClusterIP yaml should be correct" expected builtYaml
 
 let serviceTestsList : Test =
-  testList "Services tests" [
+  testList "service tests" [
     testCase "Check the ClusterIP yaml" <| verifyClusterIP
     ptestCase "Check the NodePort yaml" <| fun () -> ()
     ptestCase "Check the Headless yaml" <| fun () -> ()
     ptestCase "Check the ExternalName yaml" <| fun () -> ()
     ptestCase "Check the LoadBalancer yaml" <| fun () -> ()
   ]
-  |> testLabel "k8s"
+  |> testLabel "svc"
