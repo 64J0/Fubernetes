@@ -2,15 +2,15 @@
 
 > Still on development
 
-This tool is being created to solve the problem of dealing with YAML configuration files for Kubernetes using a programatic solution. We choose to use F# as the main language mainly due to its strong type system that could help us find bugs/problems on our configuration files easily and faster.
+This tool is being developed to solve the problem of dealing with YAML configuration files for Kubernetes, using a programatic solution. We chose to use F# as the main language due to its strong type system, which can help us find bugs/problems on our configuration files more easily and faster.
 
-Requisites:
+### Requisites:
 
 * .NET SDK 5.0.401
 
-## How it works?
+## How does it work?
 
-Basically we have created some pre-defined types to make it easier and less error-prone creating the YAML Kubernetes files. In the `Program.fs` file, in the main root of this project it's possible to see an example on how to define opaque secrets.
+We have created pre-defined types to make it easier and less error-prone to create YAML Kubernetes files. See the [Program.fs](Fsharp-K8s.Main/Program.fs) file for examples, such as **defining opaque secrets**:
 
 ```fsharp
 // Define the secret config necessary data, I.E.: the name, namespace, the labels (Option type) and the data
@@ -41,13 +41,14 @@ let config: Configuration =
 createOutPathAndBuildYaml (config)
 ```
 
-Then, to run this program, you could use this command:
+#### Running the program
 
 ```bash
 $ dotnet run --project Fsharp-K8s.Main/Main.fsproj
 ```
 
-The result after running this command will be a file called `application.yml` with this content inside:
+
+The result after running this command will be a file called `application.yml`, with the following content inside:
 
 ```yaml
 apiVersion: v1
@@ -62,7 +63,7 @@ data:
   key3: dmFsdWUz
 ```
 
-And then, you could just apply this configuration by running:
+##### Then, apply this configuration by running
 
 ```bash
 $ kubectl apply -f prod/test.secret.yml
@@ -95,9 +96,9 @@ $ kubectl apply -f prod/test.secret.yml
 
 ## Automated tests:
 
-To get more confident with this project we are using [Expecto](https://github.com/haf/expecto) to write unit tests. This tool is also written in F# and can be used for other kinds of test as well: stress tests, regresion tests or property based tests. For more information please consult the project documentation itself.
+To get more confident with this project we are using [Expecto](https://github.com/haf/expecto) to write unit tests. This tool is also written in F# and can be used for other kinds of tests as well: stress, regression or property based tests. For more information please consult the project documentation itself.
 
-To run the tests locally you just need to run those commands on the terminal:
+To run the tests locally you just need to run these commands on the terminal:
 
 ```bash
 # restore paket
