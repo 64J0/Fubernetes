@@ -10,7 +10,7 @@ This tool is being developed to solve the problem of dealing with YAML configura
 
 ## How does it work?
 
-We have created pre-defined types to make it easier and less error-prone to create YAML Kubernetes files. In the `Program.fs` file, in the main root of this project, it is possible to see an example of how to define opaque secrets.
+We have created pre-defined types to make it easier and less error-prone to create YAML Kubernetes files. See the [Program.fs](Fsharp-K8s.Main/Program.fs) file for examples, such as **defining opaque secrets**:
 
 ```fsharp
 // Define the secret config necessary data, I.E.: the name, namespace, the labels (Option type) and the data
