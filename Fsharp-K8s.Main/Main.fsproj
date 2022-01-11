@@ -6,9 +6,16 @@
     <RootNamespace>fsharp_k8s_gen</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="templates/**" 
+          CopyToOutputDirectory="PreserveNewest"
+          LinkBase="templates/" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="resources/Shared.fs" />
     <Compile Include="resources/Secret.fs" />
     <Compile Include="resources/Service.fs" />
+    <Compile Include="resources/PersistentVolume.fs" />
     <Compile Include="configuration/Configuration.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

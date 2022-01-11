@@ -15,5 +15,10 @@ module Shared =
         |> Array.filter (System.String.IsNullOrWhiteSpace >> not)
         |> Array.reduce (fun (acc: string) (line: string) -> $"{acc}\n{line}")
 
-    let templatesDirPath = "./Fsharp-K8s.Main/templates"
+    let getTemplatesDirPath (finalPath: string) =
+        Environment.GetEnvironmentVariable("RUN_ENV")
+        |> function
+            | "PRODUCTION" -> "./templates"
+            | _ -> "./Fsharp-K8s.Main/templates"
+        |> (fun (basePath: string) -> basePath + finalPath)
     

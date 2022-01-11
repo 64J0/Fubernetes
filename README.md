@@ -110,3 +110,18 @@ $ dotnet paket restore
 # run the tests
 $ dotnet run --project Fsharp-K8s.Test/Test.fsproj
 ```
+
+## Build the image and run the Docker container
+
+```bash
+# build the image
+$ docker build -t fsharp-k8s-main:latest -f Dockerfile .
+
+# run the image in a container
+$ docker run --name fsharp-k8s fsharp-k8s-main:latest
+# debug container structure
+# docker run -it --entrypoint "bash" fsharp-k8s-main:latest
+
+# running with docker-compose
+# TODO
+```
