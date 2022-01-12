@@ -1,8 +1,10 @@
 open Expecto
+open Tests.ConfigMap
 open Tests.Service
 
 let projectTests =
   testList "k8s" [
+    configMapTestsList
     serviceTestsList
   ]
 

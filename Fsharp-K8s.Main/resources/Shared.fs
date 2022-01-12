@@ -5,6 +5,15 @@ open System
 module Shared =
     type TupleString = string * string
 
+    // avoid throwing errors when reducing an empty list
+    let reduceIfNotEmpty 
+        (fn: string -> string -> string) 
+        (list: List<string>) =
+        match list with 
+        | [] -> ""
+        | nonEmptyList -> 
+            nonEmptyList |> List.reduce (fn)
+
     let replaceTabsWithSpaces (templateString: string) =
         let tabLength = 4
         let tabSpace = new String(' ', tabLength)

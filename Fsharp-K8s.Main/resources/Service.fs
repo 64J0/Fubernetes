@@ -47,7 +47,7 @@ module Service =
             let selectorValues =
                 constructor.Selector
                 |> List.map (fun (tuple: Shared.TupleString) -> $"\n\t\t{fst tuple}: {snd tuple}")
-                |> List.reduce (+)
+                |> Shared.reduceIfNotEmpty (+)
 
             templateString.Replace(selectorId, selectorValues)
 
@@ -60,7 +60,7 @@ module Service =
                     $"\n\t\t  protocol: {port.Protocol.ToString().ToLower()}" +
                     $"\n\t\t  port: {port.Port}" +
                     $"\n\t\t  targetPort: {port.TargetPort}")
-                |> List.reduce (+)
+                |> Shared.reduceIfNotEmpty (+)
 
             templateString.Replace(portId, portValues)
 
@@ -96,7 +96,7 @@ module Service =
             let selectorValues =
                 constructor.Selector
                 |> List.map (fun (tuple: Shared.TupleString) -> $"\n\t\t{fst tuple}: {snd tuple}")
-                |> List.reduce (+)
+                |> Shared.reduceIfNotEmpty (+)
 
             templateString.Replace(selectorId, selectorValues)
 
@@ -116,7 +116,7 @@ module Service =
                     | Some nodePort ->
                         portConfigWithoutNodePort +
                         $"\n\t\t  nodePort: {nodePort}")
-                |> List.reduce (+)
+                |> Shared.reduceIfNotEmpty (+)
 
             templateString.Replace(portId, portValues)
 
@@ -163,7 +163,7 @@ module Service =
                     listOfTuple
                     |> List.map (fun (tuple: Shared.TupleString) -> 
                         $"\n\t\t{fst tuple}: {snd tuple}")
-                    |> List.reduce (+)
+                    |> Shared.reduceIfNotEmpty (+)
                     |> this.addFieldName "selector:"
 
             templateString.Replace(selectorId, selectorValues)
@@ -177,7 +177,7 @@ module Service =
                     $"\n\t\t  protocol: {port.Protocol.ToString().ToLower()}" +
                     $"\n\t\t  port: {port.Port}" +
                     $"\n\t\t  targetPort: {port.TargetPort}")
-                |> List.reduce (+)
+                |> Shared.reduceIfNotEmpty (+)
 
             templateString.Replace(portId, portValues)
 
@@ -250,7 +250,7 @@ module Service =
             let selectorValues =
                 constructor.Selector
                 |> List.map (fun (tuple: Shared.TupleString) -> $"\n\t\t{fst tuple}: {snd tuple}")
-                |> List.reduce (+)
+                |> Shared.reduceIfNotEmpty (+)
 
             templateString.Replace(selectorId, selectorValues)
 
@@ -263,7 +263,7 @@ module Service =
                     $"\n\t\t  protocol: {port.Protocol.ToString().ToLower()}" +
                     $"\n\t\t  port: {port.Port}" +
                     $"\n\t\t  targetPort: {port.TargetPort}")
-                |> List.reduce (+)
+                |> Shared.reduceIfNotEmpty (+)
 
             templateString.Replace(portId, portValues)
 

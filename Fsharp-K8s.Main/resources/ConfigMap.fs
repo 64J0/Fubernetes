@@ -3,35 +3,16 @@ namespace FsharpK8s.Resources
 open System
 open System.IO
 
-// https://kubernetes.io/docs/concepts/configuration/secret/
-module Secret =
-    type OpaqueSecretConstructor =
+// https://kubernetes.io/docs/concepts/configuration/configmap/
+module ConfigMap =
+    type ConfigMapConstructor =
         { Name: string // should be lowercase
           Namespace: string
-          Data: List<Shared.TupleString> }
+          Data: List<Shared.TupleString>
+          BinaryData: List<Shared.TupleString>
+          Immutable: bool }
 
-    // TODO
-    type ServiceAccountTokenConstructor = unit
-
-    // TODO
-    type DockerCfgConstructor = unit
-
-    // TODO
-    type DockerConfigJsonConstructor = unit
-
-    // TODO
-    type BasicAuthenticationConstructor = unit
-
-    // TODO
-    type SshAuthConstructor = unit
-
-    // TODO
-    type TlsConstructor = unit
-
-    // TODO
-    type BootstrapTokenDataConstructor = unit
-
-    type OpaqueSecret (constructor: OpaqueSecretConstructor) =
+    type ConfigMap (constructor: ConfigMapConstructor) =
         member private this.addName (templateString: string) =
             let nameId = "$NAME$"
             templateString.Replace(nameId, constructor.Name)
@@ -44,28 +25,41 @@ module Secret =
         member private this.getTupleString (tuple: Shared.TupleString) =
             $"\n\t{fst tuple}: {snd tuple}"
 
-        member private this.encodeBase64 (tuple: Shared.TupleString) =
-            let encodedValue () = 
-                (snd tuple)
-                |> Text.Encoding.UTF8.GetBytes
-                |> Convert.ToBase64String
-            (fst tuple, encodedValue ())
-
         member private this.addData (templateString: string) =
             let dataId = "$DATA$"
             let dataValue =
                 constructor.Data
-                |> List.map (this.encodeBase64 >> this.getTupleString)
+                |> List.map this.getTupleString
                 |> Shared.reduceIfNotEmpty (+)
 
             templateString.Replace(dataId, dataValue)
 
+        member private this.addBinaryData (templateString: string) =
+            let binaryDataId = "$BINARY_DATA$"
+            let binaryDataValue =
+                constructor.BinaryData
+                |> List.map this.getTupleString
+                |> Shared.reduceIfNotEmpty (+)
+
+            templateString.Replace(binaryDataId, binaryDataValue)
+
+        member private this.addImmutable (templateString: string) =
+            let immutableId = "$IMMUTABLE$"
+            let immutableValue = 
+                match constructor.Immutable with
+                | true -> "true"
+                | false -> "false"
+
+            templateString.Replace(immutableId, immutableValue)
+
         member this.toYamlBuffer () =
-            let templatePath = Shared.getTemplatesDirPath "/secret/OpaqueSecret.template"
+            let templatePath = Shared.getTemplatesDirPath "/configmap/ConfigMap.template"
 
             File.ReadAllText(templatePath, Text.Encoding.UTF8)
             |> this.addName
             |> this.addNamespace
             |> this.addData
+            |> this.addBinaryData
+            |> this.addImmutable
             |> Shared.replaceTabsWithSpaces
             |> Shared.removeEmptyLines

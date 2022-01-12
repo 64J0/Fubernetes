@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <Compile Include="resources/Shared.fs" />
+    <Compile Include="resources/ConfigMap.fs" />
     <Compile Include="resources/Secret.fs" />
     <Compile Include="resources/Service.fs" />
     <Compile Include="resources/PersistentVolume.fs" />

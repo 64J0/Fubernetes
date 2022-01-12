@@ -72,6 +72,12 @@ $ kubectl apply -f prod/test.secret.yml
 ## What we have mapped so far:
 
 <details>
+  <summary>ConfigMap</summary>
+  
+  - [x] ConfigMap
+</details>
+
+<details>
   <summary>Secrets</summary>
   
   - [x] OpaqueSecrets

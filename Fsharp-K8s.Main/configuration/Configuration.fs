@@ -2,6 +2,7 @@ namespace FsharpK8s
 
 open System
 open System.IO
+open FsharpK8s.Resources
 
 module Configuration =
     type Configuration =
@@ -19,7 +20,7 @@ module Configuration =
 
     let private parseResources (resources: List<string>) : string =
         resources
-        |> List.reduce (fun (acc: string) (el: string) -> $"{acc}\n---\n{el}")
+        |> Shared.reduceIfNotEmpty (fun (acc: string) (el: string) -> $"{acc}\n---\n{el}")
 
     let createOutPathAndBuildYaml (config: Configuration) : unit =
         createOutPath (config.OutPath)
