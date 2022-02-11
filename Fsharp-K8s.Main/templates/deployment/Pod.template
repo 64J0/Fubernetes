@@ -5,8 +5,8 @@
       allowPrivilegeEscalation: false
       capabilities:
           add: []
-  $STARTING_COMMAND$
-  $STARTING_ARGUMENTS$
+  $COMMAND$
+  $ARGUMENTS$
   resources:
       requests:
           memory: $REQUEST_MEMORY$

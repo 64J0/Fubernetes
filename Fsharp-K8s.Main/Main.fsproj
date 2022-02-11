@@ -10,9 +10,9 @@
           CopyToOutputDirectory="PreserveNewest"
           LinkBase="templates/" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Include="resources/Shared.fs" />
+    <Compile Include="resources/Deployment.fs" />
     <Compile Include="resources/ConfigMap.fs" />
     <Compile Include="resources/Secret.fs" />
     <Compile Include="resources/Service.fs" />

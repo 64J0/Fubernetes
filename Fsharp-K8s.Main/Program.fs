@@ -71,12 +71,30 @@ let createSimpleSecret () =
                   ("key2", "value2")
                   ("key3", "value3") ] })
 
+    let podTest =
+      new Deployment.Pod(
+        { Name = "container"
+          Image = "nginx"
+          ImagePullPolicy = Deployment.ImagePullPolicy.Always
+          Command = Some "#!/bin/bash"
+          Arguments = Some [ "apt"; "update" ]
+          RequestMemory = 512.
+          RequestCPU = 250.
+          LimitMemory = 1024.
+          LimitCPU = 500.
+          ContainerPort = None
+          VolumeMount = None
+          Env = None
+          ImagePullSecrets = None
+          Volumes = None })
+
     let resourceList = 
         [ opaqueSecret.toYamlBuffer()
           clusterIpService.toYamlBuffer()
           nodePortService.toYamlBuffer()
           headlessService.toYamlBuffer()
-          headlessServiceWithoutSelector.toYamlBuffer() ]
+          headlessServiceWithoutSelector.toYamlBuffer()
+          podTest.toYamlBuffer() ]
 
     let outPath = "./prod/application.yml"
     let config: Configuration = 
