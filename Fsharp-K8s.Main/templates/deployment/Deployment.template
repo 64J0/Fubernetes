@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: $NAME$
+    namespace: $NAMESPACE$
+    labels:
+        $DEPLOYMENT_LABELS$
+spec:
+    replicas: $QNT_REPLICAS$
+    selector:
+        matchLabels:
+            $MATCH_LABEL$
+    minReadySeconds: $MIN_READY_SECONDS$
+    strategy:
+        type: RollingUpdate
+        rollingUpdate:
+            maxUnavailable: $QNT_MAX_UNAVAILABLE$
+            maxSurge: $QNT_MAX_SURGE$
+    template:
+        metadata:
+            labels:
+                $TEMPLATE_LABELS$
+        spec:
+            containers:
+                $CONTAINERS$

@@ -1,0 +1,21 @@
+- name: $CONTAINER_NAME$
+  image: $IMAGE$
+  imagePullPolicy: $IMAGE_PULL_POLICY$
+  securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+          add: []
+  $STARTING_COMMAND$
+  $STARTING_ARGUMENTS$
+  resources:
+      requests:
+          memory: $REQUEST_MEMORY$
+          cpu: $REQUEST_CPU$
+      limits:
+          memory: $LIMIT_MEMORY$
+          cpu: $LIMIT_CPU$
+  $CONTAINER_PORT$
+  $VOLUME_MOUNTED$
+  $ENVIRONMENT_VAR$
+  $IMAGE_PULL_SECRETS$
+  $VOLUMES$
