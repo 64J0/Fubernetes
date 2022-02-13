@@ -7,15 +7,9 @@
           add: []
   $COMMAND$
   $ARGUMENTS$
-  resources:
-      requests:
-          memory: $REQUEST_MEMORY$
-          cpu: $REQUEST_CPU$
-      limits:
-          memory: $LIMIT_MEMORY$
-          cpu: $LIMIT_CPU$
+  $RESOURCES$
   $CONTAINER_PORT$
   $VOLUME_MOUNTED$
-  $ENVIRONMENT_VAR$
   $IMAGE_PULL_SECRETS$
+  $ENVIRONMENT_VAR$
   $VOLUMES$

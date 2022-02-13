@@ -8,6 +8,12 @@ module Deployment =
     type ImagePullPolicy =
         | Always
 
+    type PodResources =
+        { RequestMemory: float
+          RequestCPU: float
+          LimitMemory: float
+          LimitCPU: float }
+
     // TODO: Add other values
     type VolumeMount =
         { Name: string
@@ -35,7 +41,7 @@ module Deployment =
     type VolumeFromSecretProviderClass =
         { Name: string
           Driver: string
-          ReadOnly: Option<bool>
+          ReadOnly: bool
           SecretProviderClassName: string }
 
     // TODO: Add other values
@@ -49,15 +55,12 @@ module Deployment =
           ImagePullPolicy: ImagePullPolicy
           Command: Option<string>
           Arguments: Option<List<string>>
-          RequestMemory: float
-          RequestCPU: float
-          LimitMemory: float
-          LimitCPU: float
+          Resources: Option<PodResources>
           ContainerPort: Option<int>
           VolumeMount: Option<List<VolumeMount>>
           Env: Option<List<EnvType>>
           ImagePullSecrets: Option<string>
-          Volumes: Option<VolumeType> }
+          Volumes: Option<List<VolumeType>> }
 
     type Pod(constructor: PodConstructor) =
         member private this.addName (templateString: string) =
@@ -94,6 +97,110 @@ module Deployment =
                 | None -> ""
             templateString.Replace(argumentsId, argumentsValue)
 
+        member private this.addResources (templateString: string) =
+            let resourcesId = "$RESOURCES$"
+            let resourcesValue =
+                match constructor.Resources with
+                | None -> ""
+                | Some resources -> 
+                    "resources:" +
+                    $"\n\trequests:" +
+                    $"\n\t\tmemory: \"{resources.RequestMemory}Mi\"" +
+                    $"\n\t\tcpu: \"{resources.RequestCPU}m\"" +
+                    $"\n\tlimits:" +
+                    $"\n\t\tmemory: \"{resources.LimitMemory}Mi\"" +
+                    $"\n\t\tcpu: \"{resources.LimitCPU}m\""
+            templateString.Replace(resourcesId, resourcesValue)
+
+        member private this.addContainerPort (templateString: string) =
+            let containerPortId = "$CONTAINER_PORT$"
+            let containerPortValue =
+                match constructor.ContainerPort with
+                | Some port ->
+                    "ports:" +
+                    $"\n\t- containerPort: {port}" 
+                | None -> ""
+            templateString.Replace(containerPortId, containerPortValue)
+
+        member private this.addVolumeMounted (templateString: string) =
+            let volumeMountedId = "$VOLUME_MOUNTED$"
+            let volumeMountedValue =
+                match constructor.VolumeMount with
+                | Some volumeMount ->
+                    volumeMount
+                    |> List.map
+                        (fun volumeSpec ->
+                            match volumeSpec.ReadOnly with
+                            | Some readOnly ->
+                                $"\n\t- name: {volumeSpec.Name}" +
+                                $"\n\t  mountPath: {volumeSpec.MountPath}" +
+                                $"\n\t  readOnly: {readOnly.ToString().ToLower()}"
+                            | None -> 
+                                $"\n\t- name: {volumeSpec.Name}" +
+                                $"\n\t  mountPath: {volumeSpec.MountPath}")
+                    |> List.append [ "volumeMounts:" ]
+                    |> Shared.reduceIfNotEmpty (+)
+                | None -> ""
+            templateString.Replace(volumeMountedId, volumeMountedValue)
+
+        member private this.addImagePullSecrets (templateString: string) =
+            let imagePullSecretsId = "$IMAGE_PULL_SECRETS$"
+            let imagePullSecretsValue =
+                match constructor.ImagePullSecrets with
+                | Some secret -> 
+                    "imagePullSecrets:" +
+                    $"\n\t- name: {secret}"
+                | None -> ""
+            templateString.Replace(imagePullSecretsId, imagePullSecretsValue)
+
+        member private this.addEnvironmentVariables (templateString: string) =
+            let envId = "$ENVIRONMENT_VAR$"
+            let envValue =
+                match constructor.Env with
+                | None -> ""
+                | Some envVars -> 
+                    envVars
+                    |> List.map
+                        (fun var ->
+                            match var with
+                            | Simple e ->
+                                $"\n\t- name: {e.Name}" +
+                                $"\n\t  value: {e.Value}"
+                            | Secret e -> 
+                                $"\n\t- name: {e.Name}" +
+                                "\n\t  valueFrom:" +
+                                $"\n\t\tsecretKeyRef:" +
+                                $"\n\t\t\tname: {e.SecretName}" +
+                                $"\n\t\t\tkey: {e.SecretKey}")
+                    |> List.append [ "env:" ]
+                    |> Shared.reduceIfNotEmpty (+)
+            templateString.Replace(envId, envValue)
+
+        member private this.addVolumes (templateString: string) =
+            let volumeId = "$VOLUMES$"
+            let volumeValue =
+                match constructor.Volumes with
+                | None -> ""
+                | Some volumeList ->
+                    volumeList
+                    |> List.map
+                        (fun vol ->
+                            match vol with
+                            | VolumeFromPVC v ->
+                                $"\n\t- name: {v.Name}" +
+                                "\n\t  persistentVolumeClaim:" +
+                                $"\n\t\tclaimName: {v.ClaimName}"
+                            | VolumeFromSecretProviderClass v -> 
+                                $"\n\t- name: {v.Name}" +
+                                "\n\t  csi:" +
+                                $"\n\t\tdriver: {v.Driver}" +
+                                $"\n\t\treadOnly: {v.ReadOnly}" +
+                                $"\n\t\tvolumeAttributes:" +
+                                $"\n\t\t\tsecretProviderClass: {v.SecretProviderClassName}")
+                    |> List.append [ "volumes:" ]
+                    |> Shared.reduceIfNotEmpty (+)
+            templateString.Replace(volumeId, volumeValue)
+
         member this.toYamlBuffer () =
             let templatePath = Shared.getTemplatesDirPath "/deployment/Pod.template"
 
@@ -103,6 +210,12 @@ module Deployment =
             |> this.addImagePullPolicy
             |> this.addCommand
             |> this.addArguments
+            |> this.addResources
+            |> this.addContainerPort
+            |> this.addVolumeMounted
+            |> this.addImagePullSecrets
+            |> this.addEnvironmentVariables
+            |> this.addVolumes
             |> Shared.replaceTabsWithSpaces
             |> Shared.removeEmptyLines
 

@@ -78,15 +78,43 @@ let createSimpleSecret () =
           ImagePullPolicy = Deployment.ImagePullPolicy.Always
           Command = Some "#!/bin/bash"
           Arguments = Some [ "apt"; "update" ]
-          RequestMemory = 512.
-          RequestCPU = 250.
-          LimitMemory = 1024.
-          LimitCPU = 500.
-          ContainerPort = None
-          VolumeMount = None
-          Env = None
+          Resources = 
+            Some 
+              { RequestMemory = 1024.
+                RequestCPU = 250.
+                LimitMemory = 2048.
+                LimitCPU = 500. }
+          ContainerPort = Some 8080
+          VolumeMount = 
+            Some [
+              { Name = "testVolume1"
+                MountPath = "/var/"
+                ReadOnly = None }
+              { Name = "testVolume2"
+                MountPath = "/var/"
+                ReadOnly = Some true }]
+          Env = 
+            Some [
+              Deployment.EnvType.Simple
+                { Name = "hostname"
+                  Value = "localhost" }
+              Deployment.EnvType.Secret
+                { Name = "password"
+                  SecretName = "database-secrets"
+                  SecretKey = "db-pwd" }
+            ]
           ImagePullSecrets = None
-          Volumes = None })
+          Volumes =
+            Some [
+              Deployment.VolumeType.VolumeFromPVC
+                { Name = "cache-volume"
+                  ClaimName = "cache-volume-pvc" }
+              Deployment.VolumeType.VolumeFromSecretProviderClass
+                { Name = "secrets-store"
+                  Driver = "secrets-csi"
+                  ReadOnly = true
+                  SecretProviderClassName = "my-secrets-csi" }
+            ] })
 
     let resourceList = 
         [ opaqueSecret.toYamlBuffer()
