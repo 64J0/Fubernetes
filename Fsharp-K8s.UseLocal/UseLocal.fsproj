@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Fsharp-K8s.Main\Main.fsproj" />
+    <ProjectReference Include="..\Fsharp-K8s.Main\Fubernetes.fsproj" />
   </ItemGroup>
 
 </Project>
