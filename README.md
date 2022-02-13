@@ -50,7 +50,7 @@ createOutPathAndBuildYaml (config)
 #### Running the program
 
 ```bash
-$ dotnet run --project Fsharp-K8s.Main/Main.fsproj
+$ dotnet run --project Fsharp-K8s.UseLocal/
 ```
 
 
