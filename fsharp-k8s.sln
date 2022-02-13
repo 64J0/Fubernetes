@@ -7,6 +7,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Main", "Fsharp-K8s.Main\Mai
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Test", "Fsharp-K8s.Test\Test.fsproj", "{81B2E8AE-0F9E-4D32-B59C-060C336C571A}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "UseLocal", "Fsharp-K8s.UseLocal\UseLocal.fsproj", "{E9AA0089-CB4E-4F81-8C05-34EB3A2C25DC}"
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,5 +46,17 @@ Global
 		{81B2E8AE-0F9E-4D32-B59C-060C336C571A}.Release|x64.Build.0 = Release|Any CPU
 		{81B2E8AE-0F9E-4D32-B59C-060C336C571A}.Release|x86.ActiveCfg = Release|Any CPU
 		{81B2E8AE-0F9E-4D32-B59C-060C336C571A}.Release|x86.Build.0 = Release|Any CPU
+		{E9AA0089-CB4E-4F81-8C05-34EB3A2C25DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9AA0089-CB4E-4F81-8C05-34EB3A2C25DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9AA0089-CB4E-4F81-8C05-34EB3A2C25DC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E9AA0089-CB4E-4F81-8C05-34EB3A2C25DC}.Debug|x64.Build.0 = Debug|Any CPU
+		{E9AA0089-CB4E-4F81-8C05-34EB3A2C25DC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E9AA0089-CB4E-4F81-8C05-34EB3A2C25DC}.Debug|x86.Build.0 = Debug|Any CPU
+		{E9AA0089-CB4E-4F81-8C05-34EB3A2C25DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9AA0089-CB4E-4F81-8C05-34EB3A2C25DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9AA0089-CB4E-4F81-8C05-34EB3A2C25DC}.Release|x64.ActiveCfg = Release|Any CPU
+		{E9AA0089-CB4E-4F81-8C05-34EB3A2C25DC}.Release|x64.Build.0 = Release|Any CPU
+		{E9AA0089-CB4E-4F81-8C05-34EB3A2C25DC}.Release|x86.ActiveCfg = Release|Any CPU
+		{E9AA0089-CB4E-4F81-8C05-34EB3A2C25DC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

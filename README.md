@@ -4,13 +4,19 @@
 
 This tool is being developed to solve the problem of dealing with YAML configuration files for Kubernetes, using a programatic solution. We chose to use F# as the main language due to its strong type system, which can help us find bugs/problems on our configuration files more easily and faster.
 
+This project structure could be explained as:
+
+* `Fsharp-K8s.Main/`: this folder have the main files of the project. Basically there is where all the necessary code lives.
+* `Fsharp-K8s.UseLocal/`: this folder should be used to test the project locally. You could run the following command through the CLI to inspect the response: `dotnet run --project Fsharp-K8s.UseLocal/`.
+* `Fsharp-K8s.Test/`: this folder store the automated tests for the project.
+
 ### Requisites:
 
 * .NET SDK 5.0.401
 
 ## How does it work?
 
-We have created pre-defined types to make it easier and less error-prone to create YAML Kubernetes files. See the [Program.fs](Fsharp-K8s.Main/Program.fs) file for examples, such as **defining opaque secrets**:
+We have created pre-defined types to make it easier and less error-prone to create YAML Kubernetes files. See the [Program.fs](Fsharp-K8s.UseLocal/Program.fs) file for examples, such as **defining opaque secrets**:
 
 ```fsharp
 // Define the secret config necessary data, I.E.: the name, namespace, the labels (Option type) and the data
