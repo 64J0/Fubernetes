@@ -28,6 +28,6 @@ module Shared =
         Environment.GetEnvironmentVariable("RUN_ENV")
         |> function
             | "PRODUCTION" -> "./templates"
-            | _ -> "./Fsharp-K8s.Main/templates"
+            | _ -> "./Fubernetes.Main/templates"
         |> (fun (basePath: string) -> basePath + finalPath)
     

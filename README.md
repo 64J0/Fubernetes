@@ -6,9 +6,9 @@ This tool is being developed to solve the problem of dealing with YAML configura
 
 This project structure could be explained as:
 
-* `Fsharp-K8s.Main/`: this folder have the main files of the project. Basically there is where all the necessary code lives.
-* `Fsharp-K8s.UseLocal/`: this folder should be used to test the project locally. You could run the following command through the CLI to inspect the response: `dotnet run --project Fsharp-K8s.UseLocal/`.
-* `Fsharp-K8s.Test/`: this folder store the automated tests for the project.
+* `Fubernetes.Main/`: this folder have the main files of the project. Basically there is where all the necessary code lives.
+* `Fubernetes.UseLocal/`: this folder should be used to test the project locally. You could run the following command through the CLI to inspect the response: `dotnet run --project Fubernetes.UseLocal/`.
+* `Fubernetes.Test/`: this folder store the automated tests for the project.
 
 ### Requisites:
 
@@ -16,7 +16,7 @@ This project structure could be explained as:
 
 ## How does it work?
 
-We have created pre-defined types to make it easier and less error-prone to create YAML Kubernetes files. See the [Program.fs](Fsharp-K8s.UseLocal/Program.fs) file for examples, such as **defining opaque secrets**:
+We have created pre-defined types to make it easier and less error-prone to create YAML Kubernetes files. See the [Program.fs](Fubernetes.UseLocal/Program.fs) file for examples, such as **defining opaque secrets**:
 
 ```fsharp
 // Define the secret config necessary data, I.E.: the name, namespace, the labels (Option type) and the data
@@ -120,19 +120,19 @@ $ dotnet tool restore
 $ dotnet paket restore
 
 # run the tests
-$ dotnet run --project Fsharp-K8s.Test/Test.fsproj
+$ dotnet run --project Fubernetes.Test/Test.fsproj
 ```
 
 ## Build the image and run the Docker container
 
 ```bash
 # build the image
-$ docker build -t fsharp-k8s-main:latest -f Dockerfile .
+$ docker build -t Fubernetes-main:latest -f Dockerfile .
 
 # run the image in a container
-$ docker run --name fsharp-k8s fsharp-k8s-main:latest
+$ docker run --name Fubernetes Fubernetes-main:latest
 # debug container structure
-# docker run -it --entrypoint "bash" fsharp-k8s-main:latest
+# docker run -it --entrypoint "bash" Fubernetes-main:latest
 
 # running with docker-compose
 # TODO
