@@ -5,18 +5,19 @@
     <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="templates/**" 
-          CopyToOutputDirectory="PreserveNewest"
-          LinkBase="templates/" />
+    <None Include="templates/**" CopyToOutputDirectory="PreserveNewest" LinkBase="templates/" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="resources/Shared.fs" />
-    <Compile Include="resources/Deployment.fs" />
-    <Compile Include="resources/ConfigMap.fs" />
-    <Compile Include="resources/Secret.fs" />
-    <Compile Include="resources/Service.fs" />
-    <Compile Include="resources/PersistentVolume.fs" />
-    <Compile Include="configuration/Configuration.fs" />
+    <Compile Include="src/Shared.fs" />
+    <Compile Include="src/Deployment.fs" />
+    <Compile Include="src/ConfigMap.fs" />
+    <Compile Include="src/Secret.fs" />
+    <Compile Include="src/Service.fs" />
+    <Compile Include="src/PersistentVolume.fs" />
+    <Compile Include="config/Configuration.fs" />
     <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="YamlDotNet" Version="13.2.0" />
   </ItemGroup>
 </Project>

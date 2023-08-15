@@ -66,3 +66,36 @@ module ConfigMap =
             |> this.addImmutable
             |> Shared.replaceTabsWithSpaces
             |> Shared.removeEmptyLines
+
+module ConfigMapTest =
+    type ConfigMapConstructor =
+        { ApiVersion: string
+          Kind: string
+          Name: string // should be lowercase
+          Namespace: string
+          Data: List<string>
+          BinaryData: List<string>
+          Immutable: bool }
+
+        static member Default =
+            { ApiVersion = "v1"
+              Kind = "ConfigMap"
+              Name = "default-configmap"
+              Namespace = "default"
+              Data = []
+              BinaryData = []
+              Immutable = false }
+
+    type ConfigMap(constructor: ConfigMapConstructor) =
+        member private this.getSerializer() : ISerializer =
+            SerializerBuilder()
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .Build()
+
+        member this.toYamlBuffer() =
+
+            let serializer = this.getSerializer ()
+
+            let serializedConfigMap = serializer.Serialize constructor
+
+            printfn "Serialized ConfigMap: %A" serializedConfigMap
