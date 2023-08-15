@@ -1,8 +1,7 @@
-namespace FsharpK8s
+namespace Fubernetes
 
-open System
 open System.IO
-open FsharpK8s.Resources
+open Fubernetes.Resources
 
 module Configuration =
     type Configuration =

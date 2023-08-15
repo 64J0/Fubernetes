@@ -1,5 +1,5 @@
-﻿open FsharpK8s.Configuration
-open FsharpK8s.Resources
+﻿open Fubernetes.Configuration
+open Fubernetes.Resources
 
 let createSimpleSecret () =
     let clusterIpService =

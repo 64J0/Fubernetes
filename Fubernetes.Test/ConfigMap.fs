@@ -2,7 +2,7 @@ module Tests.ConfigMap
 
 open Expecto
 open Expecto.Flip
-open FsharpK8s.Resources
+open Fubernetes.Resources
 
 let verifyConfigMap () =
   let expected =
