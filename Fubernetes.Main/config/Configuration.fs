@@ -11,8 +11,8 @@ module Configuration =
     let private createOutPath (outPath: string) =
         let directory = Path.GetDirectoryName(outPath)
         let destinationPathExists () = Directory.Exists(outPath)
-        
-        if not (destinationPathExists()) then
+
+        if not (destinationPathExists ()) then
             Directory.CreateDirectory(directory) |> ignore
             let file = File.Create(outPath)
             file.Close()
@@ -23,6 +23,6 @@ module Configuration =
 
     let createOutPathAndBuildYaml (config: Configuration) : unit =
         createOutPath (config.OutPath)
-        
+
         let parsedResources = parseResources config.Resources
         File.WriteAllText(config.OutPath, parsedResources)

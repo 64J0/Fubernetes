@@ -20,7 +20,7 @@ module ServiceShared =
         { Name: string
           Protocol: KubernetesProtocol
           Port: int
-          TargetPort: int 
+          TargetPort: int
           NodePort: int Option }
 
 // https://kubernetes.io/docs/concepts/services-networking/service/
@@ -33,17 +33,18 @@ module Service =
           Selector: List<Shared.TupleString>
           Ports: List<PortConfig> }
 
-    type ClusterIPService (constructor: ClusterIPServiceConstructor) =
-        member private this.addName (templateString: string) =
+    type ClusterIPService(constructor: ClusterIPServiceConstructor) =
+        member private this.addName(templateString: string) =
             let nameId = "$NAME$"
             templateString.Replace(nameId, constructor.Name)
 
-        member private this.addNamespace (templateString: string) =
+        member private this.addNamespace(templateString: string) =
             let namespaceId = "$NAMESPACE$"
             templateString.Replace(namespaceId, constructor.Namespace)
 
-        member private this.addSelector (templateString: string) =
+        member private this.addSelector(templateString: string) =
             let selectorId = "$SELECTOR$"
+
             let selectorValues =
                 constructor.Selector
                 |> List.map (fun (tuple: Shared.TupleString) -> $"\n\t\t{fst tuple}: {snd tuple}")
@@ -51,20 +52,21 @@ module Service =
 
             templateString.Replace(selectorId, selectorValues)
 
-        member private this.addPort (templateString: string) =
+        member private this.addPort(templateString: string) =
             let portId = "$PORTS$"
+
             let portValues =
                 constructor.Ports
                 |> List.map (fun (port: PortConfig) ->
-                    $"\n\t\t- name: {port.Name}" +
-                    $"\n\t\t  protocol: {port.Protocol.ToString().ToLower()}" +
-                    $"\n\t\t  port: {port.Port}" +
-                    $"\n\t\t  targetPort: {port.TargetPort}")
+                    $"\n\t\t- name: {port.Name}"
+                    + $"\n\t\t  protocol: {port.Protocol.ToString().ToLower()}"
+                    + $"\n\t\t  port: {port.Port}"
+                    + $"\n\t\t  targetPort: {port.TargetPort}")
                 |> Shared.reduceIfNotEmpty (+)
 
             templateString.Replace(portId, portValues)
 
-        member this.toYamlBuffer () =
+        member this.toYamlBuffer() =
             let templatePath = Shared.getTemplatesDirPath "/service/ClusterIP.template"
 
             File.ReadAllText(templatePath, Text.Encoding.UTF8)
@@ -82,17 +84,18 @@ module Service =
           Selector: List<Shared.TupleString>
           Ports: List<NodePortConfig> }
 
-    type NodePortService (constructor: NodePortConstructor) =
-        member private this.addName (templateString: string) =
+    type NodePortService(constructor: NodePortConstructor) =
+        member private this.addName(templateString: string) =
             let nameId = "$NAME$"
             templateString.Replace(nameId, constructor.Name)
 
-        member private this.addNamespace (templateString: string) =
+        member private this.addNamespace(templateString: string) =
             let namespaceId = "$NAMESPACE$"
             templateString.Replace(namespaceId, constructor.Namespace)
 
-        member private this.addSelector (templateString: string) =
+        member private this.addSelector(templateString: string) =
             let selectorId = "$SELECTOR$"
+
             let selectorValues =
                 constructor.Selector
                 |> List.map (fun (tuple: Shared.TupleString) -> $"\n\t\t{fst tuple}: {snd tuple}")
@@ -100,27 +103,26 @@ module Service =
 
             templateString.Replace(selectorId, selectorValues)
 
-        member private this.addPort (templateString: string) =
+        member private this.addPort(templateString: string) =
             let portId = "$PORTS$"
+
             let portValues =
                 constructor.Ports
                 |> List.map (fun (port: NodePortConfig) ->
                     let portConfigWithoutNodePort =
-                        $"\n\t\t- name: {port.Name}" +
-                        $"\n\t\t  protocol: {port.Protocol.ToString().ToLower()}" +
-                        $"\n\t\t  port: {port.Port}" +
-                        $"\n\t\t  targetPort: {port.TargetPort}"
-                    
+                        $"\n\t\t- name: {port.Name}"
+                        + $"\n\t\t  protocol: {port.Protocol.ToString().ToLower()}"
+                        + $"\n\t\t  port: {port.Port}"
+                        + $"\n\t\t  targetPort: {port.TargetPort}"
+
                     match port.NodePort with
                     | None -> portConfigWithoutNodePort
-                    | Some nodePort ->
-                        portConfigWithoutNodePort +
-                        $"\n\t\t  nodePort: {nodePort}")
+                    | Some nodePort -> portConfigWithoutNodePort + $"\n\t\t  nodePort: {nodePort}")
                 |> Shared.reduceIfNotEmpty (+)
 
             templateString.Replace(portId, portValues)
 
-        member this.toYamlBuffer () =
+        member this.toYamlBuffer() =
             let templatePath = Shared.getTemplatesDirPath "/service/ClusterIP.template"
 
             File.ReadAllText(templatePath, Text.Encoding.UTF8)
@@ -139,49 +141,46 @@ module Service =
           Selector: List<Shared.TupleString> Option
           Ports: List<PortConfig> }
 
-    type HeadlessService (constructor: HeadlessConstructor) =
-        member private this.addFieldName 
-            (fieldName: string) 
-            (templateString: string) 
-            =
-            $"{fieldName}\n{templateString}"
+    type HeadlessService(constructor: HeadlessConstructor) =
+        member private this.addFieldName (fieldName: string) (templateString: string) = $"{fieldName}\n{templateString}"
 
-        member private this.addName (templateString: string) =
+        member private this.addName(templateString: string) =
             let nameId = "$NAME$"
             templateString.Replace(nameId, constructor.Name)
 
-        member private this.addNamespace (templateString: string) =
+        member private this.addNamespace(templateString: string) =
             let namespaceId = "$NAMESPACE$"
             templateString.Replace(namespaceId, constructor.Namespace)
 
-        member private this.addSelector (templateString: string) =
+        member private this.addSelector(templateString: string) =
             let selectorId = "$SELECTOR$"
+
             let selectorValues =
                 match constructor.Selector with
                 | None -> ""
                 | Some listOfTuple ->
                     listOfTuple
-                    |> List.map (fun (tuple: Shared.TupleString) -> 
-                        $"\n\t\t{fst tuple}: {snd tuple}")
+                    |> List.map (fun (tuple: Shared.TupleString) -> $"\n\t\t{fst tuple}: {snd tuple}")
                     |> Shared.reduceIfNotEmpty (+)
                     |> this.addFieldName "selector:"
 
             templateString.Replace(selectorId, selectorValues)
 
-        member private this.addPort (templateString: string) =
+        member private this.addPort(templateString: string) =
             let portId = "$PORTS$"
+
             let portValues =
                 constructor.Ports
                 |> List.map (fun (port: PortConfig) ->
-                    $"\n\t\t- name: {port.Name}" +
-                    $"\n\t\t  protocol: {port.Protocol.ToString().ToLower()}" +
-                    $"\n\t\t  port: {port.Port}" +
-                    $"\n\t\t  targetPort: {port.TargetPort}")
+                    $"\n\t\t- name: {port.Name}"
+                    + $"\n\t\t  protocol: {port.Protocol.ToString().ToLower()}"
+                    + $"\n\t\t  port: {port.Port}"
+                    + $"\n\t\t  targetPort: {port.TargetPort}")
                 |> Shared.reduceIfNotEmpty (+)
 
             templateString.Replace(portId, portValues)
 
-        member this.toYamlBuffer () =
+        member this.toYamlBuffer() =
             let templatePath = Shared.getTemplatesDirPath "/service/Headless.template"
 
             File.ReadAllText(templatePath, Text.Encoding.UTF8)
@@ -191,27 +190,27 @@ module Service =
             |> this.addPort
             |> Shared.replaceTabsWithSpaces
             |> Shared.removeEmptyLines
-    
+
     // =================================================================
     type ExternalNameConstructor =
         { Name: string
           Namespace: string
           ExternalName: string }
 
-    type ExternalNameService (constructor: ExternalNameConstructor) =
-        member private this.addName (templateString: string) =
+    type ExternalNameService(constructor: ExternalNameConstructor) =
+        member private this.addName(templateString: string) =
             let nameId = "$NAME$"
             templateString.Replace(nameId, constructor.Name)
 
-        member private this.addNamespace (templateString: string) =
+        member private this.addNamespace(templateString: string) =
             let namespaceId = "$NAMESPACE$"
             templateString.Replace(namespaceId, constructor.Namespace)
 
-        member private this.addExternalName (templateString: string) =
+        member private this.addExternalName(templateString: string) =
             let selectorId = "$EXTERNAL_NAME$"
             templateString.Replace(selectorId, constructor.ExternalName)
 
-        member this.toYamlBuffer () =
+        member this.toYamlBuffer() =
             let templatePath = Shared.getTemplatesDirPath "/service/ExternalName.template"
 
             File.ReadAllText(templatePath, Text.Encoding.UTF8)
@@ -236,17 +235,18 @@ module Service =
           ExternalTrafficPolicy: ExternalTrafficPolicy Option
           HealthCheckNodePort: int Option }
 
-    type LoadBalancerService (constructor: LoadBalancerConstructor) =
-        member private this.addName (templateString: string) =
+    type LoadBalancerService(constructor: LoadBalancerConstructor) =
+        member private this.addName(templateString: string) =
             let nameId = "$NAME$"
             templateString.Replace(nameId, constructor.Name)
 
-        member private this.addNamespace (templateString: string) =
+        member private this.addNamespace(templateString: string) =
             let namespaceId = "$NAMESPACE$"
             templateString.Replace(namespaceId, constructor.Namespace)
 
-        member private this.addSelector (templateString: string) =
+        member private this.addSelector(templateString: string) =
             let selectorId = "$SELECTOR$"
+
             let selectorValues =
                 constructor.Selector
                 |> List.map (fun (tuple: Shared.TupleString) -> $"\n\t\t{fst tuple}: {snd tuple}")
@@ -254,47 +254,51 @@ module Service =
 
             templateString.Replace(selectorId, selectorValues)
 
-        member private this.addPort (templateString: string) =
+        member private this.addPort(templateString: string) =
             let portId = "$PORTS$"
+
             let portValues =
                 constructor.Ports
                 |> List.map (fun (port: PortConfig) ->
-                    $"\n\t\t- name: {port.Name}" +
-                    $"\n\t\t  protocol: {port.Protocol.ToString().ToLower()}" +
-                    $"\n\t\t  port: {port.Port}" +
-                    $"\n\t\t  targetPort: {port.TargetPort}")
+                    $"\n\t\t- name: {port.Name}"
+                    + $"\n\t\t  protocol: {port.Protocol.ToString().ToLower()}"
+                    + $"\n\t\t  port: {port.Port}"
+                    + $"\n\t\t  targetPort: {port.TargetPort}")
                 |> Shared.reduceIfNotEmpty (+)
 
             templateString.Replace(portId, portValues)
 
-        member private this.addClusterIP (templateString: string) =
+        member private this.addClusterIP(templateString: string) =
             let clusterIPId = "$CLUSTER_IP$"
+
             let clusterIPValue =
                 match constructor.ClusterIP with
-                | Some (ip: string) -> $"clusterIp: {ip}"
+                | Some(ip: string) -> $"clusterIp: {ip}"
                 | None -> ""
 
             templateString.Replace(clusterIPId, clusterIPValue)
 
-        member private this.addExternalTrafficPolicy (templateString: string) =
+        member private this.addExternalTrafficPolicy(templateString: string) =
             let externalTrafficPolicyId = "$EXTERNAL_TRAFFIC_POLICY$"
+
             let externalTrafficPolicyValue =
                 match constructor.ExternalTrafficPolicy with
-                | Some (policy: ExternalTrafficPolicy) -> $"externalTrafficPolicy: {policy.ToString()}"
+                | Some(policy: ExternalTrafficPolicy) -> $"externalTrafficPolicy: {policy.ToString()}"
                 | None -> ""
 
             templateString.Replace(externalTrafficPolicyId, externalTrafficPolicyValue)
 
-        member private this.addHealthCheckNodePort (templateString: string) =
+        member private this.addHealthCheckNodePort(templateString: string) =
             let healthCheckNodePortId = "$HEALTH_CHECK_NODE_PORT$"
+
             let healthCheckNodePortValue =
                 match constructor.HealthCheckNodePort with
-                | Some (port: int) -> $"healthCheckNodePort: {port}"
+                | Some(port: int) -> $"healthCheckNodePort: {port}"
                 | None -> ""
 
             templateString.Replace(healthCheckNodePortId, healthCheckNodePortValue)
 
-        member this.toYamlBuffer () =
+        member this.toYamlBuffer() =
             let templatePath = Shared.getTemplatesDirPath "/service/LoadBalancer.template"
 
             File.ReadAllText(templatePath, Text.Encoding.UTF8)

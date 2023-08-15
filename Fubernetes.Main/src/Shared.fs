@@ -6,13 +6,10 @@ module Shared =
     type TupleString = string * string
 
     // avoid throwing errors when reducing an empty list
-    let reduceIfNotEmpty 
-        (fn: string -> string -> string) 
-        (list: List<string>) =
-        match list with 
+    let reduceIfNotEmpty (fn: string -> string -> string) (list: List<string>) =
+        match list with
         | [] -> ""
-        | nonEmptyList -> 
-            nonEmptyList |> List.reduce (fn)
+        | nonEmptyList -> nonEmptyList |> List.reduce (fn)
 
     let replaceTabsWithSpaces (templateString: string) =
         let tabLength = 4
@@ -30,4 +27,3 @@ module Shared =
             | "PRODUCTION" -> "./templates"
             | _ -> "./Fubernetes.Main/templates"
         |> (fun (basePath: string) -> basePath + finalPath)
-    
