@@ -1,0 +1,42 @@
+name: Lint with Fantomas
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '**/*.fs'
+      - '**/*.fsproj'
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+# Kill other jobs when we trigger this workflow by sending new commits
+# to the PR.
+# https://stackoverflow.com/a/72408109
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  fantomas-check:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: true
+      matrix:
+        directory: [ "Fubernetes.Main/", "Fubernetes.Test/", "Fubernetes.UseLocal/" ]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '7.0.x'
+
+      - name: Tool Restore
+        run: dotnet tool restore
+
+      - name: Check lint
+        working-directory: ${{ matrix.directory }}
+        run: dotnet fantomas -r --check .
