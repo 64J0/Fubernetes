@@ -66,4 +66,3 @@ module ConfigMap =
             |> this.addImmutable
             |> Shared.replaceTabsWithSpaces
             |> Shared.removeEmptyLines
-
