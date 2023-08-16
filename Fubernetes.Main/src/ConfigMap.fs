@@ -68,22 +68,25 @@ module ConfigMap =
             |> Shared.removeEmptyLines
 
 module ConfigMapTest =
+
+    type Metadata = { Name: string; Namespace: string }
+
     type ConfigMapConstructor =
         { ApiVersion: string
           Kind: string
-          Name: string // should be lowercase
-          Namespace: string
-          Data: List<string>
-          BinaryData: List<string>
+          Metadata: Metadata
+          Data: Map<string, string>
+          BinaryData: Map<string, string>
           Immutable: bool }
 
         static member Default =
             { ApiVersion = "v1"
               Kind = "ConfigMap"
-              Name = "default-configmap"
-              Namespace = "default"
-              Data = []
-              BinaryData = []
+              Metadata =
+                { Name = "default-configmap"
+                  Namespace = "default" }
+              Data = Map.empty
+              BinaryData = Map.empty
               Immutable = false }
 
     type ConfigMap(constructor: ConfigMapConstructor) =

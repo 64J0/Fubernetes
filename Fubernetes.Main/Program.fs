@@ -6,7 +6,10 @@ let main argv =
 
     let configMap =
         { defaultConfigMap with
-            Data = [ "config-1: value-1"; "config-2: value-2" ] }
+            Metadata =
+                { Name = "test-configmap"
+                  Namespace = "default" }
+            Data = [ "config-1", "value-1"; "config-2", "value-2" ] |> Map.ofList }
 
     let configMapYaml = new ConfigMapTest.ConfigMap(configMap)
     configMapYaml.toYamlBuffer ()
