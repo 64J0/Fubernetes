@@ -2,7 +2,6 @@
 
 open Expecto
 open Expecto.Flip
-open Fubernetes.Configuration
 open Fubernetes.Resources
 
 let verifyClusterIP () =

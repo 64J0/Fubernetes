@@ -2,29 +2,32 @@ module Tests.ConfigMap
 
 open Expecto
 open Expecto.Flip
-open Fubernetes.Resources
+open Fubernetes
 
 let verifyConfigMap () =
     let expected =
         """apiVersion: v1
 kind: ConfigMap
 metadata:
-    name: configmap-01
-    namespace: default
-data: 
-    config-1: value-1
-    config-2: value-2
-binaryData: 
-immutable: false"""
+  name: test-configmap
+  namespace: default
+data:
+  config-1: value-1
+  config-2: value-2
+binaryData: {}
+immutable: false
+"""
 
-    let configMap =
-        new ConfigMap.ConfigMap(
-            { Name = "configmap-01"
-              Namespace = "default"
-              Data = [ ("config-1", "value-1"); ("config-2", "value-2") ]
-              BinaryData = []
-              Immutable = false }
-        )
+    let defaultConfigMap = ConfigMapConstructor.Default
+
+    let configMapConstructor =
+        { defaultConfigMap with
+            Metadata =
+                { Name = "test-configmap"
+                  Namespace = "default" }
+            Data = [ "config-1", "value-1"; "config-2", "value-2" ] |> Map.ofList }
+
+    let configMap = new ConfigMap(configMapConstructor)
 
     let builtYaml = configMap.toYamlBuffer ()
     Expect.equal "ConfigMap yaml should be valid" expected builtYaml
