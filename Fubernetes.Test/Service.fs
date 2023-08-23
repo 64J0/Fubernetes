@@ -2,7 +2,7 @@
 
 open Expecto
 open Expecto.Flip
-open Fubernetes.Resources
+open Fubernetes.Service
 
 let verifyClusterIP () =
     let expected =
@@ -27,19 +27,23 @@ spec:
     type: ClusterIP"""
 
     let clusterIpService =
-        new Service.ClusterIPService(
-            { Name = "svc-clusterip-01"
-              Namespace = "default"
-              Selector = [ ("app", "nginx"); ("network", "main-svc") ]
-              Ports =
-                [ { Name = "tcp-port"
-                    Protocol = ServiceShared.KubernetesProtocol.TCP
-                    Port = 8000
-                    TargetPort = 8080 }
-                  { Name = "udp-port"
-                    Protocol = ServiceShared.KubernetesProtocol.UDP
-                    Port = 8001
-                    TargetPort = 8081 } ] }
+        new ClusterIP(
+            { ClusterIPConstructor.Default with
+                Metadata =
+                    { Name = "svc-clusterip-01"
+                      Namespace = "default" }
+                Spec =
+                    { Selector = ([ "app", "nginx"; "network", "main-svc" ] |> Map.ofList)
+                      Ports =
+                        [ { Name = "tcp-port"
+                            Protocol = ServiceProtocol.TCP
+                            Port = 8000
+                            TargetPort = 8080 }
+                          { Name = "udp-port"
+                            Protocol = ServiceProtocol.UDP
+                            Port = 8001
+                            TargetPort = 8081 } ]
+                      Type = ServiceKind.ClusterIP } }
         )
 
     let builtYaml = clusterIpService.toYamlBuffer ()

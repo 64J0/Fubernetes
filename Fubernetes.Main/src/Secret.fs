@@ -2,47 +2,48 @@ namespace Fubernetes
 
 open Fubernetes
 
-[<RequireQualifiedAccess>]
-type SecretKind =
-    | Opaque
+module Secret =
 
-type OpaqueSecretConstructor =
-    { ApiVersion: string
-      Kind: string
-      Metadata: Shared.Metadata
-      Type: SecretKind
-      Data: Map<string, string> }
+    [<RequireQualifiedAccess>]
+    type SecretKind = | Opaque
 
-    static member Default =
-        { ApiVersion = "v1"
-          Kind = "Secret"
-          Metadata =
-            { Name = "default-opaquesecret"
-              Namespace = "default" }
-          Type = SecretKind.Opaque
-          Data = Map.empty }
+    type OpaqueSecretConstructor =
+        { ApiVersion: string
+          Kind: string
+          Metadata: Shared.Metadata
+          Type: SecretKind
+          Data: Map<string, string> }
 
-// https://kubernetes.io/docs/concepts/configuration/secret/
-type OpaqueSecret(constructor: OpaqueSecretConstructor) =
-    inherit Shared.BaseManifest (constructor)
+        static member Default =
+            { ApiVersion = "v1"
+              Kind = "Secret"
+              Metadata =
+                { Name = "default-opaquesecret"
+                  Namespace = "default" }
+              Type = SecretKind.Opaque
+              Data = Map.empty }
 
-// TODO
-type ServiceAccountTokenConstructor = unit
+    // https://kubernetes.io/docs/concepts/configuration/secret/
+    type OpaqueSecret(constructor: OpaqueSecretConstructor) =
+        inherit Shared.BaseManifest(constructor)
 
-// TODO
-type DockerCfgConstructor = unit
+    // TODO
+    type ServiceAccountTokenConstructor = unit
 
-// TODO
-type DockerConfigJsonConstructor = unit
+    // TODO
+    type DockerCfgConstructor = unit
 
-// TODO
-type BasicAuthenticationConstructor = unit
+    // TODO
+    type DockerConfigJsonConstructor = unit
 
-// TODO
-type SSHAuthConstructor = unit
+    // TODO
+    type BasicAuthenticationConstructor = unit
 
-// TODO
-type TLSConstructor = unit
+    // TODO
+    type SSHAuthConstructor = unit
 
-// TODO
-type BootstrapTokenDataConstructor = unit
+    // TODO
+    type TLSConstructor = unit
+
+    // TODO
+    type BootstrapTokenDataConstructor = unit

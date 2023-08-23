@@ -1,313 +1,168 @@
-namespace Fubernetes.Resources
+namespace Fubernetes
 
 open System
 open System.IO
 
-module ServiceShared =
-    type KubernetesProtocol =
+// https://kubernetes.io/docs/concepts/services-networking/service/
+module Service =
+
+    [<RequireQualifiedAccess>]
+    type ServiceProtocol =
         | TCP
         | UDP
         | SCTP
         | HTTP
 
-    type PortConfig =
+    [<RequireQualifiedAccess>]
+    type ServiceKind =
+        | ClusterIP
+        | NodePort
+        | ExternalName
+        | LoadBalancer
+
+    type ClusterIPPortConfig =
         { Name: string
-          Protocol: KubernetesProtocol
+          Protocol: ServiceProtocol
           Port: int
           TargetPort: int }
 
-    type NodePortConfig =
+    type NodePortPortConfig =
         { Name: string
-          Protocol: KubernetesProtocol
+          Protocol: ServiceProtocol
           Port: int
           TargetPort: int
           NodePort: int Option }
 
-// https://kubernetes.io/docs/concepts/services-networking/service/
-module Service =
-    open ServiceShared
+    type ServiceSpec<'T> =
+        { Selector: Map<string, string>
+          Ports: List<'T>
+          Type: ServiceKind }
 
-    type ClusterIPServiceConstructor =
-        { Name: string
-          Namespace: string
-          Selector: List<Shared.TupleString>
-          Ports: List<PortConfig> }
+    type ClusterIPConstructor =
+        { ApiVersion: string
+          Kind: string
+          Metadata: Shared.Metadata
+          Spec: ServiceSpec<ClusterIPPortConfig> }
 
-    type ClusterIPService(constructor: ClusterIPServiceConstructor) =
-        member private this.addName(templateString: string) =
-            let nameId = "$NAME$"
-            templateString.Replace(nameId, constructor.Name)
+        static member Default =
+            { ApiVersion = "v1"
+              Kind = "Service"
+              Metadata =
+                { Name = "default-clusterip"
+                  Namespace = "default" }
+              Spec =
+                { Selector = [ "app.kubernetes.io/name", "MyApp" ] |> Map.ofList
+                  Ports = List.empty
+                  Type = ServiceKind.ClusterIP } }
 
-        member private this.addNamespace(templateString: string) =
-            let namespaceId = "$NAMESPACE$"
-            templateString.Replace(namespaceId, constructor.Namespace)
-
-        member private this.addSelector(templateString: string) =
-            let selectorId = "$SELECTOR$"
-
-            let selectorValues =
-                constructor.Selector
-                |> List.map (fun (tuple: Shared.TupleString) -> $"\n\t\t{fst tuple}: {snd tuple}")
-                |> Shared.reduceIfNotEmpty (+)
-
-            templateString.Replace(selectorId, selectorValues)
-
-        member private this.addPort(templateString: string) =
-            let portId = "$PORTS$"
-
-            let portValues =
-                constructor.Ports
-                |> List.map (fun (port: PortConfig) ->
-                    $"\n\t\t- name: {port.Name}"
-                    + $"\n\t\t  protocol: {port.Protocol.ToString().ToLower()}"
-                    + $"\n\t\t  port: {port.Port}"
-                    + $"\n\t\t  targetPort: {port.TargetPort}")
-                |> Shared.reduceIfNotEmpty (+)
-
-            templateString.Replace(portId, portValues)
-
-        member this.toYamlBuffer() =
-            let templatePath = Shared.getTemplatesDirPath "/service/ClusterIP.template"
-
-            File.ReadAllText(templatePath, Text.Encoding.UTF8)
-            |> this.addName
-            |> this.addNamespace
-            |> this.addSelector
-            |> this.addPort
-            |> Shared.replaceTabsWithSpaces
-            |> Shared.removeEmptyLines
+    type ClusterIP(constructor: ClusterIPConstructor) =
+        inherit Shared.BaseManifest(constructor)
 
     // =================================================================
     type NodePortConstructor =
-        { Name: string
-          Namespace: string
-          Selector: List<Shared.TupleString>
-          Ports: List<NodePortConfig> }
+        { ApiVersion: string
+          Kind: string
+          Metadata: Shared.Metadata
+          Spec: ServiceSpec<NodePortPortConfig> }
 
-    type NodePortService(constructor: NodePortConstructor) =
-        member private this.addName(templateString: string) =
-            let nameId = "$NAME$"
-            templateString.Replace(nameId, constructor.Name)
+        static member Default =
+            { ApiVersion = "v1"
+              Kind = "Service"
+              Metadata =
+                { Name = "default-nodeport"
+                  Namespace = "default" }
+              Spec =
+                { Selector = [ "app.kubernetes.io/name", "MyApp" ] |> Map.ofList
+                  Ports = List.empty
+                  Type = ServiceKind.NodePort } }
 
-        member private this.addNamespace(templateString: string) =
-            let namespaceId = "$NAMESPACE$"
-            templateString.Replace(namespaceId, constructor.Namespace)
-
-        member private this.addSelector(templateString: string) =
-            let selectorId = "$SELECTOR$"
-
-            let selectorValues =
-                constructor.Selector
-                |> List.map (fun (tuple: Shared.TupleString) -> $"\n\t\t{fst tuple}: {snd tuple}")
-                |> Shared.reduceIfNotEmpty (+)
-
-            templateString.Replace(selectorId, selectorValues)
-
-        member private this.addPort(templateString: string) =
-            let portId = "$PORTS$"
-
-            let portValues =
-                constructor.Ports
-                |> List.map (fun (port: NodePortConfig) ->
-                    let portConfigWithoutNodePort =
-                        $"\n\t\t- name: {port.Name}"
-                        + $"\n\t\t  protocol: {port.Protocol.ToString().ToLower()}"
-                        + $"\n\t\t  port: {port.Port}"
-                        + $"\n\t\t  targetPort: {port.TargetPort}"
-
-                    match port.NodePort with
-                    | None -> portConfigWithoutNodePort
-                    | Some nodePort -> portConfigWithoutNodePort + $"\n\t\t  nodePort: {nodePort}")
-                |> Shared.reduceIfNotEmpty (+)
-
-            templateString.Replace(portId, portValues)
-
-        member this.toYamlBuffer() =
-            let templatePath = Shared.getTemplatesDirPath "/service/ClusterIP.template"
-
-            File.ReadAllText(templatePath, Text.Encoding.UTF8)
-            |> this.addName
-            |> this.addNamespace
-            |> this.addSelector
-            |> this.addPort
-            |> Shared.replaceTabsWithSpaces
-            |> Shared.removeEmptyLines
+    type NodePort(constructor: NodePortConstructor) =
+        inherit Shared.BaseManifest(constructor)
 
     // =================================================================
     // https://blog.knoldus.com/what-is-headless-service-setup-a-service-in-kubernetes/
+
+    type HeadlessServiceSpec =
+        { Selector: Map<string, string>
+          Ports: List<ClusterIPPortConfig>
+          Type: ServiceKind
+          ClusterIP: string }
+
     type HeadlessConstructor =
-        { Name: string
-          Namespace: string
-          Selector: List<Shared.TupleString> Option
-          Ports: List<PortConfig> }
+        { ApiVersion: string
+          Kind: string
+          Metadata: Shared.Metadata
+          Spec: HeadlessServiceSpec }
 
-    type HeadlessService(constructor: HeadlessConstructor) =
-        member private this.addFieldName (fieldName: string) (templateString: string) = $"{fieldName}\n{templateString}"
+        static member Default =
+            { ApiVersion = "v1"
+              Kind = "Service"
+              Metadata =
+                { Name = "default-headlessservice"
+                  Namespace = "default" }
+              Spec =
+                { Selector = [ "app.kubernetes.io/name", "MyApp" ] |> Map.ofList
+                  Ports = List.empty
+                  Type = ServiceKind.ClusterIP
+                  ClusterIP = "None" } }
 
-        member private this.addName(templateString: string) =
-            let nameId = "$NAME$"
-            templateString.Replace(nameId, constructor.Name)
-
-        member private this.addNamespace(templateString: string) =
-            let namespaceId = "$NAMESPACE$"
-            templateString.Replace(namespaceId, constructor.Namespace)
-
-        member private this.addSelector(templateString: string) =
-            let selectorId = "$SELECTOR$"
-
-            let selectorValues =
-                match constructor.Selector with
-                | None -> ""
-                | Some listOfTuple ->
-                    listOfTuple
-                    |> List.map (fun (tuple: Shared.TupleString) -> $"\n\t\t{fst tuple}: {snd tuple}")
-                    |> Shared.reduceIfNotEmpty (+)
-                    |> this.addFieldName "selector:"
-
-            templateString.Replace(selectorId, selectorValues)
-
-        member private this.addPort(templateString: string) =
-            let portId = "$PORTS$"
-
-            let portValues =
-                constructor.Ports
-                |> List.map (fun (port: PortConfig) ->
-                    $"\n\t\t- name: {port.Name}"
-                    + $"\n\t\t  protocol: {port.Protocol.ToString().ToLower()}"
-                    + $"\n\t\t  port: {port.Port}"
-                    + $"\n\t\t  targetPort: {port.TargetPort}")
-                |> Shared.reduceIfNotEmpty (+)
-
-            templateString.Replace(portId, portValues)
-
-        member this.toYamlBuffer() =
-            let templatePath = Shared.getTemplatesDirPath "/service/Headless.template"
-
-            File.ReadAllText(templatePath, Text.Encoding.UTF8)
-            |> this.addName
-            |> this.addNamespace
-            |> this.addSelector
-            |> this.addPort
-            |> Shared.replaceTabsWithSpaces
-            |> Shared.removeEmptyLines
+    type Headless(constructor: HeadlessConstructor) =
+        inherit Shared.BaseManifest(constructor)
 
     // =================================================================
-    type ExternalNameConstructor =
-        { Name: string
-          Namespace: string
+    type ExternalNameSpec =
+        { Type: ServiceKind
           ExternalName: string }
 
-    type ExternalNameService(constructor: ExternalNameConstructor) =
-        member private this.addName(templateString: string) =
-            let nameId = "$NAME$"
-            templateString.Replace(nameId, constructor.Name)
+    type ExternalNameConstructor =
+        { ApiVersion: string
+          Kind: string
+          Metadata: Shared.Metadata
+          Spec: ExternalNameSpec }
 
-        member private this.addNamespace(templateString: string) =
-            let namespaceId = "$NAMESPACE$"
-            templateString.Replace(namespaceId, constructor.Namespace)
+        static member Default =
+            { ApiVersion = "v1"
+              Kind = "Service"
+              Metadata =
+                { Name = "default-externalname"
+                  Namespace = "default" }
+              Spec =
+                { Type = ServiceKind.ExternalName
+                  ExternalName = "my.database.example.com" } }
 
-        member private this.addExternalName(templateString: string) =
-            let selectorId = "$EXTERNAL_NAME$"
-            templateString.Replace(selectorId, constructor.ExternalName)
-
-        member this.toYamlBuffer() =
-            let templatePath = Shared.getTemplatesDirPath "/service/ExternalName.template"
-
-            File.ReadAllText(templatePath, Text.Encoding.UTF8)
-            |> this.addName
-            |> this.addNamespace
-            |> this.addExternalName
-            |> Shared.replaceTabsWithSpaces
-            |> Shared.removeEmptyLines
+    type ExternalName(constructor: ExternalNameConstructor) =
+        inherit Shared.BaseManifest(constructor)
 
     // =================================================================
     // https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
+    [<RequireQualifiedAccess>]
     type ExternalTrafficPolicy =
         | Cluster
         | Local
 
+    type LoadBalancerSpec =
+        { Selector: Map<string, string>
+          Ports: List<ClusterIPPortConfig>
+          ExternalTrafficPolicy: ExternalTrafficPolicy
+          Type: ServiceKind }
+
     type LoadBalancerConstructor =
-        { Name: string
-          Namespace: string
-          Selector: List<Shared.TupleString>
-          Ports: List<PortConfig>
-          ClusterIP: string Option
-          ExternalTrafficPolicy: ExternalTrafficPolicy Option
-          HealthCheckNodePort: int Option }
+        { ApiVersion: string
+          Kind: string
+          Metadata: Shared.Metadata
+          Spec: LoadBalancerSpec }
+
+        static member Default =
+            { ApiVersion = "v1"
+              Kind = "Service"
+              Metadata =
+                { Name = "default-headlessservice"
+                  Namespace = "default" }
+              Spec =
+                { Selector = [ "app", "example" ] |> Map.ofList
+                  Ports = List.empty
+                  ExternalTrafficPolicy = ExternalTrafficPolicy.Local
+                  Type = ServiceKind.LoadBalancer } }
 
     type LoadBalancerService(constructor: LoadBalancerConstructor) =
-        member private this.addName(templateString: string) =
-            let nameId = "$NAME$"
-            templateString.Replace(nameId, constructor.Name)
-
-        member private this.addNamespace(templateString: string) =
-            let namespaceId = "$NAMESPACE$"
-            templateString.Replace(namespaceId, constructor.Namespace)
-
-        member private this.addSelector(templateString: string) =
-            let selectorId = "$SELECTOR$"
-
-            let selectorValues =
-                constructor.Selector
-                |> List.map (fun (tuple: Shared.TupleString) -> $"\n\t\t{fst tuple}: {snd tuple}")
-                |> Shared.reduceIfNotEmpty (+)
-
-            templateString.Replace(selectorId, selectorValues)
-
-        member private this.addPort(templateString: string) =
-            let portId = "$PORTS$"
-
-            let portValues =
-                constructor.Ports
-                |> List.map (fun (port: PortConfig) ->
-                    $"\n\t\t- name: {port.Name}"
-                    + $"\n\t\t  protocol: {port.Protocol.ToString().ToLower()}"
-                    + $"\n\t\t  port: {port.Port}"
-                    + $"\n\t\t  targetPort: {port.TargetPort}")
-                |> Shared.reduceIfNotEmpty (+)
-
-            templateString.Replace(portId, portValues)
-
-        member private this.addClusterIP(templateString: string) =
-            let clusterIPId = "$CLUSTER_IP$"
-
-            let clusterIPValue =
-                match constructor.ClusterIP with
-                | Some(ip: string) -> $"clusterIp: {ip}"
-                | None -> ""
-
-            templateString.Replace(clusterIPId, clusterIPValue)
-
-        member private this.addExternalTrafficPolicy(templateString: string) =
-            let externalTrafficPolicyId = "$EXTERNAL_TRAFFIC_POLICY$"
-
-            let externalTrafficPolicyValue =
-                match constructor.ExternalTrafficPolicy with
-                | Some(policy: ExternalTrafficPolicy) -> $"externalTrafficPolicy: {policy.ToString()}"
-                | None -> ""
-
-            templateString.Replace(externalTrafficPolicyId, externalTrafficPolicyValue)
-
-        member private this.addHealthCheckNodePort(templateString: string) =
-            let healthCheckNodePortId = "$HEALTH_CHECK_NODE_PORT$"
-
-            let healthCheckNodePortValue =
-                match constructor.HealthCheckNodePort with
-                | Some(port: int) -> $"healthCheckNodePort: {port}"
-                | None -> ""
-
-            templateString.Replace(healthCheckNodePortId, healthCheckNodePortValue)
-
-        member this.toYamlBuffer() =
-            let templatePath = Shared.getTemplatesDirPath "/service/LoadBalancer.template"
-
-            File.ReadAllText(templatePath, Text.Encoding.UTF8)
-            |> this.addName
-            |> this.addNamespace
-            |> this.addSelector
-            |> this.addPort
-            |> this.addClusterIP
-            |> this.addExternalTrafficPolicy
-            |> this.addHealthCheckNodePort
-            |> Shared.replaceTabsWithSpaces
-            |> Shared.removeEmptyLines
+        inherit Shared.BaseManifest(constructor)

@@ -1,12 +1,19 @@
 namespace Fubernetes
 
 open System.IO
-open Fubernetes.Resources
 
 module Configuration =
     type Configuration =
         { OutPath: string
           Resources: List<string> }
+
+    type Fn = string -> string -> string
+
+    // avoid throwing errors when reducing an empty list
+    let reduceIfNotEmpty (fn: Fn) (list: List<string>) =
+        match list with
+        | [] -> ""
+        | nonEmptyList -> nonEmptyList |> List.reduce (fn)
 
     let private createOutPath (outPath: string) =
         let directory = Path.GetDirectoryName(outPath)
@@ -19,7 +26,7 @@ module Configuration =
 
     let private parseResources (resources: List<string>) : string =
         resources
-        |> Shared.reduceIfNotEmpty (fun (acc: string) (el: string) -> $"{acc}\n---\n{el}")
+        |> reduceIfNotEmpty (fun (acc: string) (el: string) -> $"{acc}\n---\n{el}")
 
     let createOutPathAndBuildYaml (config: Configuration) : unit =
         createOutPath (config.OutPath)

@@ -8,13 +8,13 @@
     <None Include="templates/**" CopyToOutputDirectory="PreserveNewest" LinkBase="templates/" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src/Shared.fs" />
+    <Compile Include="config/Shared.fs" />
+    <Compile Include="config/Configuration.fs" />
     <Compile Include="src/Deployment.fs" />
     <Compile Include="src/ConfigMap.fs" />
     <Compile Include="src/Secret.fs" />
     <Compile Include="src/Service.fs" />
     <Compile Include="src/PersistentVolume.fs" />
-    <Compile Include="config/Configuration.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
