@@ -1,70 +1,48 @@
-namespace Fubernetes.Resources
+namespace Fubernetes
 
-open System
-open System.IO
+open Fubernetes
+
+[<RequireQualifiedAccess>]
+type SecretKind =
+    | Opaque
+
+type OpaqueSecretConstructor =
+    { ApiVersion: string
+      Kind: string
+      Metadata: Shared.Metadata
+      Type: SecretKind
+      Data: Map<string, string> }
+
+    static member Default =
+        { ApiVersion = "v1"
+          Kind = "Secret"
+          Metadata =
+            { Name = "default-opaquesecret"
+              Namespace = "default" }
+          Type = SecretKind.Opaque
+          Data = Map.empty }
 
 // https://kubernetes.io/docs/concepts/configuration/secret/
-module Secret =
-    type OpaqueSecretConstructor =
-        { Name: string // should be lowercase
-          Namespace: string
-          Data: List<Shared.TupleString> }
+type OpaqueSecret(constructor: OpaqueSecretConstructor) =
+    inherit Shared.BaseManifest (constructor)
 
-    // TODO
-    type ServiceAccountTokenConstructor = unit
+// TODO
+type ServiceAccountTokenConstructor = unit
 
-    // TODO
-    type DockerCfgConstructor = unit
+// TODO
+type DockerCfgConstructor = unit
 
-    // TODO
-    type DockerConfigJsonConstructor = unit
+// TODO
+type DockerConfigJsonConstructor = unit
 
-    // TODO
-    type BasicAuthenticationConstructor = unit
+// TODO
+type BasicAuthenticationConstructor = unit
 
-    // TODO
-    type SshAuthConstructor = unit
+// TODO
+type SSHAuthConstructor = unit
 
-    // TODO
-    type TlsConstructor = unit
+// TODO
+type TLSConstructor = unit
 
-    // TODO
-    type BootstrapTokenDataConstructor = unit
-
-    type OpaqueSecret(constructor: OpaqueSecretConstructor) =
-        member private this.addName(templateString: string) =
-            let nameId = "$NAME$"
-            templateString.Replace(nameId, constructor.Name)
-
-        member private this.addNamespace(templateString: string) =
-            let namespaceId = "$NAMESPACE$"
-            templateString.Replace(namespaceId, constructor.Namespace)
-
-        // https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/strings
-        member private this.getTupleString(tuple: Shared.TupleString) = $"\n\t{fst tuple}: {snd tuple}"
-
-        member private this.encodeBase64(tuple: Shared.TupleString) =
-            let encodedValue () =
-                (snd tuple) |> Text.Encoding.UTF8.GetBytes |> Convert.ToBase64String
-
-            (fst tuple, encodedValue ())
-
-        member private this.addData(templateString: string) =
-            let dataId = "$DATA$"
-
-            let dataValue =
-                constructor.Data
-                |> List.map (this.encodeBase64 >> this.getTupleString)
-                |> Shared.reduceIfNotEmpty (+)
-
-            templateString.Replace(dataId, dataValue)
-
-        member this.toYamlBuffer() =
-            let templatePath = Shared.getTemplatesDirPath "/secret/OpaqueSecret.template"
-
-            File.ReadAllText(templatePath, Text.Encoding.UTF8)
-            |> this.addName
-            |> this.addNamespace
-            |> this.addData
-            |> Shared.replaceTabsWithSpaces
-            |> Shared.removeEmptyLines
+// TODO
+type BootstrapTokenDataConstructor = unit
