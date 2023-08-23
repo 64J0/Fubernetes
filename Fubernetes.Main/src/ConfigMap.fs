@@ -1,14 +1,9 @@
 namespace Fubernetes
 
-open YamlDotNet.Serialization
-open YamlDotNet.Serialization.NamingConventions
-
-type Metadata = { Name: string; Namespace: string }
-
 type ConfigMapConstructor =
     { ApiVersion: string
       Kind: string
-      Metadata: Metadata
+      Metadata: Shared.Metadata
       Data: Map<string, string>
       BinaryData: Map<string, string>
       Immutable: bool }
@@ -25,13 +20,4 @@ type ConfigMapConstructor =
 
 // https://kubernetes.io/docs/concepts/configuration/configmap/
 type ConfigMap(constructor: ConfigMapConstructor) =
-    member private this.getSerializer() : ISerializer =
-        SerializerBuilder()
-            .WithNamingConvention(CamelCaseNamingConvention.Instance)
-            .Build()
-
-    member this.toYamlBuffer() =
-
-        let serializer = this.getSerializer ()
-
-        serializer.Serialize constructor
+    inherit Shared.BaseManifest(constructor)
