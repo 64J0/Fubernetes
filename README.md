@@ -137,3 +137,18 @@ $ docker run --name Fubernetes Fubernetes-main:latest
 # running with docker-compose
 # TODO
 ```
+
+## Automated tests coverage
+
+For collecting the automated tests coverage we use dotnet tool: [dotnet-coverage](https://learn.microsoft.com/en-us/dotnet/core/additional-tools/dotnet-coverage).
+
+```bash
+$ dotnet tool restore
+
+$ dotnet dotnet-coverage collect -f "xml" "dotnet run --project Fubernetes.Test/"
+
+# and to visualize the report
+$ dotnet reportgenerator -reports:output.xml -targetdir:coveragereport
+```
+
+There are many examples here: [link](https://github.com/microsoft/codecoverage/blob/main/samples/Calculator/README.md).
