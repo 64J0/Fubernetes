@@ -3,9 +3,6 @@ namespace Fubernetes.Resources
 open System
 open System.IO
 
-open YamlDotNet.Serialization
-open YamlDotNet.Serialization.NamingConventions
-
 // https://kubernetes.io/docs/concepts/configuration/configmap/
 module ConfigMap =
     type ConfigMapConstructor =
