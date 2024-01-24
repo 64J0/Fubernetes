@@ -4,6 +4,10 @@ obj/
 .fake
 prod/
 
-#Paket dependency manager
+# Paket dependency manager
 .paket/
 paket-files/
+
+# Coverage files
+output.xml
+coveragereport/
